@@ -44,7 +44,7 @@ public class GameFrame extends JFrame{
      */
     public void initUI() {
         setTitle("Sommurai");
-        setSize(800, 275);
+        setSize(800, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
