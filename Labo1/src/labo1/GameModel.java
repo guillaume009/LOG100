@@ -22,7 +22,7 @@ public class GameModel {
      * Initialise la partie qui contient les chiffres du jeu
      */
     public GameModel(){
-        initialiseNumbers(false,false);
+        initialiseNumbers(false,false,false,false);
     }  
 
     /**
@@ -30,8 +30,8 @@ public class GameModel {
      * @param noise Si l'option noise est activé
      * @param mean Si l'option mean est activé
      */
-    public GameModel(Boolean noise,Boolean mean){
-        initialiseNumbers(noise,mean);
+    public GameModel(boolean noise,boolean mean,boolean noHelp,boolean reverse){
+        initialiseNumbers(noise,mean,noHelp,reverse);
     } 
     public int getSomme(){
         return totalToGet;
@@ -53,7 +53,7 @@ public class GameModel {
      * @param noise si il y a un noise
      * @param mean si c'est une division
      */
-    private void initialiseNumbers(boolean noise,boolean mean){
+    private void initialiseNumbers(boolean noise,boolean mean,boolean noHelp, boolean reverse){
         nbDecoupage = chooseNbDecoupage();
         totalToGet = 0;
         for(int i = 0; i < nbDecoupage; i++){
