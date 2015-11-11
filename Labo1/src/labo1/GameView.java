@@ -115,6 +115,14 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblSommeCoursChiffre.setText("0");
         lblGroupsValue.setText("0");
         groups = 0;        
+        if(noHelp){
+            lblSommeCoursChiffre.setVisible(false);
+            lblGroupsValue.setVisible(false);
+        }
+        else{
+            lblSommeCoursChiffre.setVisible(true);
+            lblGroupsValue.setVisible(true);
+        }
         isDragging = false;
         listLabelDigits = new ArrayList();
         nbDecoupage = gameModel.getNbDecoupage();
@@ -240,11 +248,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         String newTotal = "";
         Color c = Color.decode("0X00FFFF");
         boolean orderValid = true;
-        if(listDrag.size() >= 2){ //Vérifie si la selection de plusieurs chiffre est de gauche à droite
+        /*if(listDrag.size() >= 2){ //Vérifie si la selection de plusieurs chiffre est de gauche à droite
            if(listDrag.get(0).getX() > listDrag.get(1).getX()){
               orderValid = false;
            }
-        }
+        }*/
         if(orderValid){
             changeDigitColor(listDrag.get(0));
             c = listDrag.get(0).getBackground();
@@ -624,7 +632,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         else{
             reverse = false;
         }
-        this.gameModel = new GameModel(noise,mean,noHelp,reverse);
+        this.gameModel = new GameModel(noise,mean,reverse);
         setNewValues();    
     }//GEN-LAST:event_btnNextMouseClicked
     /***
