@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 
 /**
@@ -34,6 +37,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private boolean mean;//Si le mean est activé
     private boolean isDragging;//Si le joueur est en train de drag
     private Validation valid;//Classe pour la validation
+    private Timer timer;
+    private int timerMin;
+    private int timerSec;
     private String[] sColors = new String[] { "0X00FFFF", "0X7FFFD4", "0X89CFF0",
     "0XF4C2C2", "0X98777B", "0XFFBF00", "0XFBCEB1", "0XF0F8FF", "0X6495ED",
     "0X654321", "0X9BDDFF", "0XFBEC5D","0XFF7F50", "0X00FFFF", "0X99BADD",
@@ -79,6 +85,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * Réinitialise les actions effectuées
      */
     private void resetValue(){ 
+        resetTimer(0,0);
         lblChiffreSomme.setText(String.valueOf(gameModel.getSomme()));
         lblSommeCoursChiffre.setText("0");
         lblGroupsValue.setText("0");
@@ -93,6 +100,33 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         }
         this.updateUI();
     }
+    private void resetTimer(int secValue, int minValue){ 
+        timer = new Timer(1000, timerUpdate);
+        timer.setInitialDelay(1000);        
+        timer.start();
+        timerMin = secValue;
+        timerSec = minValue; 
+    }
+    ActionListener timerUpdate = new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+          timerSec++;
+          if (timerSec == 60) {
+                    timerSec = 00;
+                    timerMin++;
+            }          
+            /*if (timerSec == 00) { 
+                    timerSec = 60;
+                    timerMin--;
+            }
+            timerSec--;*/            
+            if(timerSec < 10){
+               lblTimeValue.setText(timerMin + ":0" + timerSec); 
+            }
+            else{
+                lblTimeValue.setText(timerMin + ":" + timerSec);
+            }
+      }
+    };
     /***
      * Affiche de nouveaux chiffres 
      */
@@ -225,6 +259,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jProgressBar1 = new javax.swing.JProgressBar();
         panelDigits = new javax.swing.JPanel();
         pnlInfo = new javax.swing.JPanel();
         btnNext = new javax.swing.JButton();
@@ -244,6 +279,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         checkNoise = new javax.swing.JCheckBox();
         checkNoHelp = new javax.swing.JCheckBox();
         checkReverse = new javax.swing.JCheckBox();
+        lblTime = new javax.swing.JLabel();
+        lblTimeValue = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 300));
 
@@ -377,6 +414,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
 
         checkReverse.setText("Reverse");
 
+        lblTime.setText("Temps :");
+
+        lblTimeValue.setText("0:00");
+
         javax.swing.GroupLayout pnlCheckBoxLayout = new javax.swing.GroupLayout(pnlCheckBox);
         pnlCheckBox.setLayout(pnlCheckBoxLayout);
         pnlCheckBoxLayout.setHorizontalGroup(
@@ -384,17 +425,29 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             .addGroup(pnlCheckBoxLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(checkNoise)
-                    .addComponent(checkMean)
-                    .addComponent(checkNoHelp)
-                    .addComponent(checkReverse))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlCheckBoxLayout.createSequentialGroup()
+                        .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(checkReverse)
+                            .addComponent(checkMean)
+                            .addComponent(checkNoHelp))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlCheckBoxLayout.createSequentialGroup()
+                        .addComponent(checkNoise)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                        .addComponent(lblTime)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblTimeValue)
+                        .addGap(26, 26, 26))))
         );
         pnlCheckBoxLayout.setVerticalGroup(
             pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlCheckBoxLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addComponent(checkNoise)
+                .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(checkNoise)
+                    .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblTime)
+                        .addComponent(lblTimeValue)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(checkMean)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -416,7 +469,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 .addComponent(pnlInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(98, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(panelDigits, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -444,6 +497,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt Le clic
      */
     private void btnNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNextMouseClicked
+        timer.stop();
         if(checkNoise.isSelected() && !checkMean.isSelected()){
             noise = true;
             mean = false;
@@ -511,12 +565,15 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private javax.swing.JCheckBox checkReverse;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JLabel lblChiffreSomme;
     private javax.swing.JLabel lblGroups;
     private javax.swing.JLabel lblGroupsValue;
     private javax.swing.JLabel lblResetNumber;
     private javax.swing.JLabel lblResetNumberValue;
     private javax.swing.JLabel lblSommeCoursChiffre;
+    private javax.swing.JLabel lblTime;
+    private javax.swing.JLabel lblTimeValue;
     private javax.swing.JPanel panelDigits;
     private javax.swing.JPanel pnlCheckBox;
     private javax.swing.JPanel pnlInfo;
