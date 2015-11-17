@@ -45,6 +45,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private boolean modeArcade;
     private boolean modeReplay;
     private Validation valid;//Classe pour la validation
+    private saveData save;//Classe pour la sauvegarde
     private int nbReset;
     private int nbPoints;
     private Timer timer;
@@ -62,6 +63,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     public GameView(GameModel gameNumbers) {
         initComponents();
         valid = new Validation();
+        save = new saveData();
         gameModel = gameNumbers; 
         nbDecoupage = gameModel.getNbDecoupage();
         modeEntrainement = true;
@@ -150,16 +152,17 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     }
     ActionListener timerUpdate = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-          timerSec++;
-          if (timerSec == 60) {
-                    timerSec = 00;
-                    timerMin++;
+        timerSec++;
+            if (timerSec == 60) {
+                timerSec = 00;
+                timerMin++;
             }    
-          if ((timerMin >= 1 && timerSec == 30) || (timerMin >= 2 && timerSec == 00)){
-              
-              nbPoints = valid.findNewPointsTotal(nbPoints, -2);
-              lblPointsValue.setText(String.valueOf(nbPoints));
-          }
+            if (modeArcade){
+                if ((timerMin >= 1 && timerSec == 30) || (timerMin >= 2 && timerSec == 00)){ 
+                    nbPoints = valid.findNewPointsTotal(nbPoints, -2);
+                    lblPointsValue.setText(String.valueOf(nbPoints));
+                }
+            }
             /*if (timerSec == 00) { 
                     timerSec = 60;
                     timerMin--;
@@ -566,6 +569,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         });
 
         btnSave.setText("Sauver la partie");
+        btnSave.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSaveMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlGameModeLayout = new javax.swing.GroupLayout(pnlGameMode);
         pnlGameMode.setLayout(pnlGameModeLayout);
@@ -638,30 +646,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt Le clic
      */
     private void btnNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNextMouseClicked
-        /*if(checkNoise.isSelected()){
-            noise = true;
-        }
-        else{
-            noise = false;
-        }
-        if(checkMean.isSelected()){
-            mean = true;
-        }
-        else{
-            mean = false;
-        }
-        if(checkNoHelp.isSelected()){
-            noHelp = true;
-        }
-        else{
-            noHelp = false;
-        }
-        if(checkReverse.isSelected()){
-            reverse = true;
-        }
-        else{
-            reverse = false;
-        }*/
         this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();    
     }//GEN-LAST:event_btnNextMouseClicked
@@ -670,8 +654,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt Le clic
      */
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
-        nbPoints = valid.findNewPointsTotal(nbPoints, -3);
-        lblPointsValue.setText(String.valueOf(nbPoints));
+        if(modeArcade){
+            nbPoints = valid.findNewPointsTotal(nbPoints, -3);        
+            lblPointsValue.setText(String.valueOf(nbPoints));
+        }
         nbReset++;
         lblResetNumberValue.setText(String.valueOf(nbReset));
         resetValue();
@@ -780,15 +766,27 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
 
     private void radioReplayItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioReplayItemStateChanged
         if(radioReplay.isSelected()){
-            modeReplay = true;
-            modeEntrainement = false;
-            modeArcade = false;
-            checkMean.setEnabled(true);
-            checkNoHelp.setEnabled(true);
-            checkNoise.setEnabled(true);
-            checkReverse.setEnabled(true);
+            GameObject g = save.readFile();
+            if(g != null){
+                System.out.println("test");
+                modeReplay = true;
+                modeEntrainement = false;
+                modeArcade = false;
+                checkMean.setEnabled(true);
+                checkNoHelp.setEnabled(true);
+                checkNoise.setEnabled(true);
+                checkReverse.setEnabled(true);
+            }
+            
         }
     }//GEN-LAST:event_radioReplayItemStateChanged
+
+    private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
+        save.saveToFile(gameModel.getSomme(),lblSommeCoursChiffre.getText(),groups,
+                lblResetNumberValue.getText(),noise,mean,noHelp,reverse,timerMin,
+                timerSec,nbPoints,radioArcade.isSelected(),radioReplay.isSelected(),radioTraining.isSelected(),
+                gameModel.getNoisePosition(),gameModel.getNbDecoupage(),listLabel);
+    }//GEN-LAST:event_btnSaveMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

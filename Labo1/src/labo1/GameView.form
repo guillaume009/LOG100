@@ -440,6 +440,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Sauver la partie"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnSaveMouseClicked"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
