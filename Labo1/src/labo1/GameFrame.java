@@ -17,7 +17,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 public class GameFrame extends JFrame{
 
     public static GameView gameView; //hérite de JPanel, gère l’interface et contrôle
-    public static GameModel gameModel; //exemplaire du jeu.
+    public static GameModel gameModel; //exemplaire du jeu.on
 
     /**
      * Crée le jeu

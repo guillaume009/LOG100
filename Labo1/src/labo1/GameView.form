@@ -45,11 +45,11 @@
               <Component id="panelDigits" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="pnlInfo" max="32767" attributes="0"/>
                   <Component id="pnlCheckBox" max="32767" attributes="0"/>
-                  <Component id="pnlGameMode" min="-2" max="-2" attributes="0"/>
+                  <Component id="pnlInfo" alignment="0" max="32767" attributes="0"/>
+                  <Component id="pnlGameMode" alignment="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace pref="37" max="32767" attributes="0"/>
+              <EmptySpace pref="32" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -60,7 +60,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="820" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -254,19 +254,15 @@
                               <Component id="checkNoise" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="checkMean" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace pref="19" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="lblPoints" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="lblPointsValue" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace pref="19" max="32767" attributes="0"/>
-                                  <Component id="lblTime" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="lblTimeValue" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="lblPoints" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblTime" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblTimeValue" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblPointsValue" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -392,7 +388,7 @@
                   <Component id="radioArcade" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="radioReplay" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="17" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="btnSave" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

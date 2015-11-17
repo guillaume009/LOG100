@@ -331,7 +331,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         panelDigits.setLayout(panelDigitsLayout);
         panelDigitsLayout.setHorizontalGroup(
             panelDigitsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 820, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         panelDigitsLayout.setVerticalGroup(
             panelDigitsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -478,17 +478,14 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                         .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(checkNoise)
                             .addComponent(checkMean))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                         .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCheckBoxLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(lblPoints)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblPointsValue))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCheckBoxLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                                .addComponent(lblTime)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblTimeValue)))))
+                            .addComponent(lblPoints, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblTime, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTimeValue, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblPointsValue, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         pnlCheckBoxLayout.setVerticalGroup(
@@ -563,7 +560,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 .addComponent(radioArcade)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(radioReplay)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSave)
                 .addContainerGap())
         );
@@ -592,10 +589,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 .addComponent(panelDigits, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlGameMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                    .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlGameMode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
