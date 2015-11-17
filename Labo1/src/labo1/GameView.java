@@ -450,12 +450,52 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblSommeCoursChiffre.getAccessibleContext().setAccessibleName("lblSommeCoursChiffre");
 
         checkMean.setText("Find mean");
+        checkMean.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                checkMeanItemStateChanged(evt);
+            }
+        });
+        checkMean.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                checkMeanStateChanged(evt);
+            }
+        });
 
         checkNoise.setText("Noise");
+        checkNoise.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                checkNoiseItemStateChanged(evt);
+            }
+        });
+        checkNoise.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                checkNoiseStateChanged(evt);
+            }
+        });
 
         checkNoHelp.setText("No help");
+        checkNoHelp.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                checkNoHelpItemStateChanged(evt);
+            }
+        });
+        checkNoHelp.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                checkNoHelpStateChanged(evt);
+            }
+        });
 
         checkReverse.setText("Reverse");
+        checkReverse.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                checkReverseItemStateChanged(evt);
+            }
+        });
+        checkReverse.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                checkReverseStateChanged(evt);
+            }
+        });
 
         lblTime.setText("Temps :");
 
@@ -678,6 +718,66 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private void radioArcadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioArcadeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_radioArcadeActionPerformed
+
+    private void checkNoiseStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkNoiseStateChanged
+       
+    }//GEN-LAST:event_checkNoiseStateChanged
+
+    private void checkMeanStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkMeanStateChanged
+        
+    }//GEN-LAST:event_checkMeanStateChanged
+
+    private void checkNoHelpStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkNoHelpStateChanged
+        
+    }//GEN-LAST:event_checkNoHelpStateChanged
+
+    private void checkReverseStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkReverseStateChanged
+        
+    }//GEN-LAST:event_checkReverseStateChanged
+
+    private void checkNoiseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoiseItemStateChanged
+         if(checkNoise.isSelected()){
+            noise = true;
+        }
+        else{
+            noise = false;
+        }
+        this.gameModel = new GameModel(noise,mean,reverse);
+        setNewValues();
+    }//GEN-LAST:event_checkNoiseItemStateChanged
+
+    private void checkMeanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkMeanItemStateChanged
+        if(checkMean.isSelected()){
+            mean = true;
+        }
+        else{
+            mean = false;
+        }
+        this.gameModel = new GameModel(noise,mean,reverse);
+        setNewValues();
+    }//GEN-LAST:event_checkMeanItemStateChanged
+
+    private void checkNoHelpItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoHelpItemStateChanged
+        if(checkNoHelp.isSelected()){
+            noHelp = true;
+        }
+        else{
+            noHelp = false;
+        }
+        this.gameModel = new GameModel(noise,mean,reverse);
+        setNewValues();
+    }//GEN-LAST:event_checkNoHelpItemStateChanged
+
+    private void checkReverseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkReverseItemStateChanged
+        if(checkReverse.isSelected()){
+            reverse = true;
+        }
+        else{
+            reverse = false;
+        }
+        this.gameModel = new GameModel(noise,mean,reverse);
+        setNewValues();
+    }//GEN-LAST:event_checkReverseItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
