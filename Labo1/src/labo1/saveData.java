@@ -48,7 +48,6 @@ public class saveData {
             bw.write("=" + System.getProperty( "line.separator" ));
             for(int i = 0; i < listLabel.size(); i++){
                 bw.write(reset);
-                System.out.println(listLabel.get(i).getText());
                 bw.write(listLabel.get(i).getText() + ";");
                 bw.write(String.valueOf(listLabel.get(i).getBackground()));
                 bw.write(System.getProperty( "line.separator" ));

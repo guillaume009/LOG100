@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -776,6 +777,13 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 checkNoHelp.setEnabled(true);
                 checkNoise.setEnabled(true);
                 checkReverse.setEnabled(true);
+            }
+            else{                
+                JOptionPane.showMessageDialog(null, "Aucune sauvegarde disponible, retour au mode entrainnement");
+                radioReplay.setSelected(false);
+                radioTraining.setSelected(true);
+                this.gameModel = new GameModel(noise,mean,reverse,false);
+                setNewValues();
             }
             
         }
