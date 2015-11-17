@@ -5,6 +5,7 @@
  */
 package labo1;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,14 +46,13 @@ public class saveData {
             bw.write(String.valueOf(trainning) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(noisePosition) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(nbDecoupage) + System.getProperty( "line.separator" ));
-            bw.write("=" + System.getProperty( "line.separator" ));
             for(int i = 0; i < listLabel.size(); i++){
                 bw.write(reset);
                 bw.write(listLabel.get(i).getText() + ";");
                 bw.write(String.valueOf(listLabel.get(i).getBackground()));
                 bw.write(System.getProperty( "line.separator" ));
             }
-            bw.write("=" + System.getProperty( "line.separator" ));
+            bw.write("//");
             bw.close();
             fw.close();  
         } catch ( IOException e ) {
@@ -60,26 +60,64 @@ public class saveData {
         }
     }
     
-    public GameObject readFile(){
-        GameObject g = new GameObject();        
+    public ArrayList readFile(){
+        ArrayList <GameObject> listGameObject = new ArrayList();
         try {
             BufferedReader br = new BufferedReader(new FileReader("saves.txt"));
             StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = br.readLine();
+            String currentLine = br.readLine();
+            while (currentLine != null) {
+                sb.append(currentLine);
+                sb.append("\n");
+                currentLine = br.readLine();
             }
-            String everything = sb.toString();
-            br.close();
-        } catch(java.io.FileNotFoundException e){
+            
+            String completeFile = sb.toString();
+            String[] tabGames = completeFile.split("//");
+            String[] tabGameValue;
+            
+            GameObject g;
+            for (int i = 0; i < tabGames.length; i++) {
+                if(!tabGames[i].equals("\n")){
+                    g = new GameObject();
+                    tabGameValue = tabGames[i].split("\n");
+
+                    g.somme = tabGameValue[0];
+                    g.sommeEnCours = tabGameValue[1];
+                    g.groups = tabGameValue[2];
+                    g.reset = tabGameValue[3];
+                    g.noise = Boolean.getBoolean(tabGameValue[4]);
+                    g.mean = Boolean.getBoolean(tabGameValue[5]);
+                    g.noHelp = Boolean.getBoolean(tabGameValue[6]);
+                    g.reverse = Boolean.getBoolean(tabGameValue[7]);
+                    g.timerMin = tabGameValue[8];
+                    g.timerSec = tabGameValue[9];
+                    g.nbPoints = tabGameValue[10];
+                    g.arcade = Boolean.getBoolean(tabGameValue[11]);
+                    g.replay = Boolean.getBoolean(tabGameValue[12]);
+                    g.trainning = Boolean.getBoolean(tabGameValue[13]);
+                    g.noisePosition = tabGameValue[14];
+                    g.nbDecoupage = tabGameValue[15];
+                    String[] JLabelValue = tabGameValue[16].split(";");
+                    char[] digits = JLabelValue[0].toCharArray();
+                    JLabel label = new JLabel();
+                    label.setText(String.valueOf(digits[1]));
+                    //label.setBackground((Color)JLabelValue[1]);
+                    listGameObject.add(g);
+                }
+            }
+            br.close();            
+        } 
+        catch(java.io.FileNotFoundException e){
             return null;
         }
         catch ( IOException e ) {
             e.printStackTrace();
         }
-        return g;
+        return listGameObject;
+    }
+    
+    private void splitLabelValue(String labelValue){
+        
     }
 }

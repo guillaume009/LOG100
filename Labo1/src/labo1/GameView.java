@@ -767,9 +767,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
 
     private void radioReplayItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioReplayItemStateChanged
         if(radioReplay.isSelected()){
-            GameObject g = save.readFile();
+            ArrayList<GameObject> g = save.readFile();
             if(g != null){
-                System.out.println("test");
                 modeReplay = true;
                 modeEntrainement = false;
                 modeArcade = false;
@@ -777,6 +776,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 checkNoHelp.setEnabled(true);
                 checkNoise.setEnabled(true);
                 checkReverse.setEnabled(true);
+                lblChiffreSomme.setText(g.get(1).somme);
+                lblSommeCoursChiffre.setText(g.get(1).sommeEnCours);
+                
             }
             else{                
                 JOptionPane.showMessageDialog(null, "Aucune sauvegarde disponible, retour au mode entrainnement");
