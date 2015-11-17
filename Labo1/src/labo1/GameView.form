@@ -156,7 +156,6 @@
           </AccessibilityProperties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnNextMouseClicked"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNextActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnGiveUp">
@@ -311,7 +310,6 @@
           </AccessibilityProperties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="checkMeanItemStateChanged"/>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="checkMeanStateChanged"/>
           </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="checkNoise">
@@ -323,7 +321,6 @@
           </AccessibilityProperties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="checkNoiseItemStateChanged"/>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="checkNoiseStateChanged"/>
           </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="checkNoHelp">
@@ -332,7 +329,6 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="checkNoHelpItemStateChanged"/>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="checkNoHelpStateChanged"/>
           </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="checkReverse">
@@ -341,7 +337,6 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="checkReverseItemStateChanged"/>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="checkReverseStateChanged"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblTime">
@@ -421,9 +416,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Arcade"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radioArcadeActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="radioTraining">
           <Properties>

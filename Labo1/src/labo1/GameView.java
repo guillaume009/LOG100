@@ -80,7 +80,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlInfo.setBorder(b);
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
-        nbPoints = 0;
+        nbPoints = 100;
+        lblPointsValue.setText(String.valueOf(nbPoints));
         timer = new Timer(1000, timerUpdate);
         timer.setInitialDelay(1000);
         initialiseColors();        
@@ -147,7 +148,12 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
           if (timerSec == 60) {
                     timerSec = 00;
                     timerMin++;
-            }          
+            }    
+          if ((timerMin >= 1 && timerSec == 30) || (timerMin >= 2 && timerSec == 00)){
+              
+              nbPoints = valid.findNewPointsTotal(nbPoints, -2);
+              lblPointsValue.setText(String.valueOf(nbPoints));
+          }
             /*if (timerSec == 00) { 
                     timerSec = 60;
                     timerMin--;
@@ -344,11 +350,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 btnNextMouseClicked(evt);
             }
         });
-        btnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNextActionPerformed(evt);
-            }
-        });
 
         btnGiveUp.setText("Give up");
         btnGiveUp.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -455,21 +456,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 checkMeanItemStateChanged(evt);
             }
         });
-        checkMean.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                checkMeanStateChanged(evt);
-            }
-        });
 
         checkNoise.setText("Noise");
         checkNoise.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 checkNoiseItemStateChanged(evt);
-            }
-        });
-        checkNoise.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                checkNoiseStateChanged(evt);
             }
         });
 
@@ -479,21 +470,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 checkNoHelpItemStateChanged(evt);
             }
         });
-        checkNoHelp.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                checkNoHelpStateChanged(evt);
-            }
-        });
 
         checkReverse.setText("Reverse");
         checkReverse.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 checkReverseItemStateChanged(evt);
-            }
-        });
-        checkReverse.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                checkReverseStateChanged(evt);
             }
         });
 
@@ -558,11 +539,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblGameMode.setText("Mode de jeu :");
 
         radioArcade.setText("Arcade");
-        radioArcade.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioArcadeActionPerformed(evt);
-            }
-        });
 
         radioTraining.setText("Entrainnement");
 
@@ -635,17 +611,13 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 .addContainerGap(32, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnNextActionPerformed
     /***
      * Quand le bouton next est cliqué, un nouveau jeu est créer en fonction des
      * options
      * @param evt Le clic
      */
     private void btnNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNextMouseClicked
-        if(checkNoise.isSelected()){
+        /*if(checkNoise.isSelected()){
             noise = true;
         }
         else{
@@ -668,7 +640,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         }
         else{
             reverse = false;
-        }
+        }*/
         this.gameModel = new GameModel(noise,mean,reverse);
         setNewValues();    
     }//GEN-LAST:event_btnNextMouseClicked
@@ -677,6 +649,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt Le clic
      */
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+        nbPoints = valid.findNewPointsTotal(nbPoints, -3);
+        lblPointsValue.setText(String.valueOf(nbPoints));
         nbReset++;
         lblResetNumberValue.setText(String.valueOf(nbReset));
         resetValue();
@@ -714,26 +688,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         }        
         this.updateUI();
     }//GEN-LAST:event_btnGiveUpMouseClicked
-
-    private void radioArcadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioArcadeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_radioArcadeActionPerformed
-
-    private void checkNoiseStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkNoiseStateChanged
-       
-    }//GEN-LAST:event_checkNoiseStateChanged
-
-    private void checkMeanStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkMeanStateChanged
-        
-    }//GEN-LAST:event_checkMeanStateChanged
-
-    private void checkNoHelpStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkNoHelpStateChanged
-        
-    }//GEN-LAST:event_checkNoHelpStateChanged
-
-    private void checkReverseStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkReverseStateChanged
-        
-    }//GEN-LAST:event_checkReverseStateChanged
 
     private void checkNoiseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoiseItemStateChanged
          if(checkNoise.isSelected()){
