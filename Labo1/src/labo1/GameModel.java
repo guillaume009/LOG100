@@ -30,8 +30,13 @@ public class GameModel {
      * @param noise Si l'option noise est activé
      * @param mean Si l'option mean est activé
      */
-    public GameModel(boolean noise,boolean mean,boolean reverse){
-        initialiseNumbers(noise,mean,reverse);
+    public GameModel(boolean noise,boolean mean,boolean reverse,boolean arcade){
+        if(arcade){
+            
+        }
+        else{
+           initialiseNumbers(noise,mean,reverse); 
+        }
     } 
     public int getSomme(){
         return totalToGet;
@@ -54,6 +59,10 @@ public class GameModel {
      * @param mean si c'est une division
      */
     private void initialiseNumbers(boolean noise,boolean mean,boolean reverse){
+        generateListNumbers(mean,noise);
+        splitListNumbers(reverse);
+    }
+    private void generateListNumbers(boolean mean, boolean noise){
         nbDecoupage = chooseNbDecoupage();
         totalToGet = 0;
         for(int i = 0; i < nbDecoupage; i++){
@@ -78,7 +87,9 @@ public class GameModel {
         if(noise){
             noiseValue = gerenerateLowRandom();
             insertNoise();
-        }         
+        }     
+    }
+    private void splitListNumbers(boolean reverse){
         for(int i = 0; i < listNumbers.size();i++){            
             if ((int)listNumbers.get(i) > 9){                
                 int[] numberSplited = splitNumber((int)listNumbers.get(i));

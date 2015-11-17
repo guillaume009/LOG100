@@ -118,7 +118,6 @@ public class Validation {
     public int findNewPointsTotal(int currentPoints, int pointChange){
         int pointTotal = currentPoints;        
         pointTotal = pointTotal + pointChange;
-        System.out.println("asd" + pointTotal + pointChange + currentPoints);
         if(pointTotal < 0){
             pointTotal = 0;
         }

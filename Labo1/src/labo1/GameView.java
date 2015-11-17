@@ -41,6 +41,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private boolean noHelp;//Si le no help est activé
     private boolean reverse;//Si le reverse est activé
     private boolean isDragging;//Si le joueur est en train de drag
+    private boolean modeEntrainement;
+    private boolean modeArcade;
+    private boolean modeReplay;
     private Validation valid;//Classe pour la validation
     private int nbReset;
     private int nbPoints;
@@ -61,6 +64,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         valid = new Validation();
         gameModel = gameNumbers; 
         nbDecoupage = gameModel.getNbDecoupage();
+        modeEntrainement = true;
+        modeArcade = false;
+        modeReplay = false;
         noise = false;
         mean = false;
         reverse = false;
@@ -80,7 +86,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlInfo.setBorder(b);
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
-        nbPoints = 100;
+        nbPoints = 0;
         lblPointsValue.setText(String.valueOf(nbPoints));
         timer = new Timer(1000, timerUpdate);
         timer.setInitialDelay(1000);
@@ -539,10 +545,25 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblGameMode.setText("Mode de jeu :");
 
         radioArcade.setText("Arcade");
+        radioArcade.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                radioArcadeItemStateChanged(evt);
+            }
+        });
 
         radioTraining.setText("Entrainnement");
+        radioTraining.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                radioTrainingItemStateChanged(evt);
+            }
+        });
 
         radioReplay.setText("Replay");
+        radioReplay.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                radioReplayItemStateChanged(evt);
+            }
+        });
 
         btnSave.setText("Sauver la partie");
 
@@ -641,7 +662,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         else{
             reverse = false;
         }*/
-        this.gameModel = new GameModel(noise,mean,reverse);
+        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();    
     }//GEN-LAST:event_btnNextMouseClicked
     /***
@@ -696,7 +717,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         else{
             noise = false;
         }
-        this.gameModel = new GameModel(noise,mean,reverse);
+        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();
     }//GEN-LAST:event_checkNoiseItemStateChanged
 
@@ -707,7 +728,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         else{
             mean = false;
         }
-        this.gameModel = new GameModel(noise,mean,reverse);
+        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();
     }//GEN-LAST:event_checkMeanItemStateChanged
 
@@ -718,7 +739,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         else{
             noHelp = false;
         }
-        this.gameModel = new GameModel(noise,mean,reverse);
+        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();
     }//GEN-LAST:event_checkNoHelpItemStateChanged
 
@@ -729,9 +750,45 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         else{
             reverse = false;
         }
-        this.gameModel = new GameModel(noise,mean,reverse);
+        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();
     }//GEN-LAST:event_checkReverseItemStateChanged
+
+    private void radioTrainingItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioTrainingItemStateChanged
+        if(radioTraining.isSelected()){
+            modeEntrainement = true;
+            modeArcade = false;
+            modeReplay = false;
+            checkMean.setEnabled(true);
+            checkNoHelp.setEnabled(true);
+            checkNoise.setEnabled(true);
+            checkReverse.setEnabled(true);
+        }
+    }//GEN-LAST:event_radioTrainingItemStateChanged
+
+    private void radioArcadeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioArcadeItemStateChanged
+        if(radioArcade.isSelected()){
+            modeArcade = true;
+            modeEntrainement = false;
+            modeReplay = false;            
+            checkMean.setEnabled(false);
+            checkNoHelp.setEnabled(false);
+            checkNoise.setEnabled(false);
+            checkReverse.setEnabled(false);
+        }
+    }//GEN-LAST:event_radioArcadeItemStateChanged
+
+    private void radioReplayItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioReplayItemStateChanged
+        if(radioReplay.isSelected()){
+            modeReplay = true;
+            modeEntrainement = false;
+            modeArcade = false;
+            checkMean.setEnabled(true);
+            checkNoHelp.setEnabled(true);
+            checkNoise.setEnabled(true);
+            checkReverse.setEnabled(true);
+        }
+    }//GEN-LAST:event_radioReplayItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
