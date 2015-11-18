@@ -37,6 +37,7 @@ public class saveData {
             bw.write(String.valueOf(noise) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(mean) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(noHelp) + System.getProperty( "line.separator" ));
+            System.out.println(" string value no help : " + String.valueOf(noHelp));
             bw.write(String.valueOf(reverse) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(timerMin) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(timerSec) + System.getProperty( "line.separator" ));
@@ -87,16 +88,17 @@ public class saveData {
                     g.sommeEnCours = tabGameValue[1];
                     g.groups = tabGameValue[2];
                     g.reset = tabGameValue[3];
-                    g.noise = Boolean.getBoolean(tabGameValue[4]);
-                    g.mean = Boolean.getBoolean(tabGameValue[5]);
-                    g.noHelp = Boolean.getBoolean(tabGameValue[6]);
-                    g.reverse = Boolean.getBoolean(tabGameValue[7]);
+                    g.noise = getBoolFromString(tabGameValue[4]);
+                    g.mean = getBoolFromString(tabGameValue[5]);
+                    g.noHelp = getBoolFromString(tabGameValue[6]);
+                    System.out.println(g.noHelp);
+                    g.reverse = getBoolFromString(tabGameValue[7]);
                     g.timerMin = tabGameValue[8];
                     g.timerSec = tabGameValue[9];
                     g.nbPoints = tabGameValue[10];
-                    g.arcade = Boolean.getBoolean(tabGameValue[11]);
-                    g.replay = Boolean.getBoolean(tabGameValue[12]);
-                    g.trainning = Boolean.getBoolean(tabGameValue[13]);
+                    g.arcade = getBoolFromString(tabGameValue[11]);
+                    g.replay = getBoolFromString(tabGameValue[12]);
+                    g.trainning = getBoolFromString(tabGameValue[13]);
                     g.noisePosition = tabGameValue[14];
                     g.nbDecoupage = tabGameValue[15];
                     int listNumbersLength = Integer.parseInt(tabGameValue[16]);
@@ -123,5 +125,12 @@ public class saveData {
             e.printStackTrace();
         }
         return listGameObject;
+    }
+    
+    private boolean getBoolFromString(String s){
+        if(s.equals("true")){
+            return true;
+        }
+        return false;
     }
 }

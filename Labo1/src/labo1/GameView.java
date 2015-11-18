@@ -34,9 +34,13 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private ArrayList<JLabel> listLabel;//Liste des label qu'il faut cliquer
     private ArrayList listLabelDigits;//Liste des label qu'il faut cliquer
     private ArrayList<JLabel> listDrag;//Liste des label qu'il faut cliquer
+    private ArrayList<GameObject> listGameObject;//Liste des label qu'il faut cliquer
     private int groups;//Nombre de regroupement
     private int nbDecoupage;//Nombre de découpage qu'il faut avoir
     private Color[] colors;//Tableau de couleur pour les regroupements
+    private Timer timer;
+    private Validation valid;//Classe pour la validation
+    private saveData save;//Classe pour la sauvegarde
     private boolean noise;//Si le noise est activé
     private boolean mean;//Si le mean est activé
     private boolean noHelp;//Si le no help est activé
@@ -45,15 +49,13 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private boolean modeEntrainement;
     private boolean modeArcade;
     private boolean modeReplay;
-    private Validation valid;//Classe pour la validation
-    private saveData save;//Classe pour la sauvegarde
     private int nbReset;
     private int nbPoints;
-    private Timer timer;
     private int timerMin;
     private int timerSec;
     private int timerMinSave;
     private int timerSecSave;
+    private int currentReplay;
     private String[] sColors = new String[] { "0X00FFFF", "0X7FFFD4", "0X89CFF0",
     "0XF4C2C2", "0X98777B", "0XFFBF00", "0XFBCEB1", "0XF0F8FF", "0X6495ED",
     "0X654321", "0X9BDDFF", "0XFBEC5D","0XFF7F50", "0X00FFFF", "0X99BADD",
@@ -87,6 +89,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
         nbPoints = 0;
+        currentReplay = 0;
         lblPointsValue.setText(String.valueOf(nbPoints));
         timer = new Timer(1000, timerUpdate);
         timer.setInitialDelay(1000);
@@ -142,6 +145,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             lblSommeCoursChiffre.setVisible(true);
             lblGroupsValue.setVisible(true);
         }
+        btnNext.setEnabled(true);
         isDragging = false;
         listLabelDigits = new ArrayList();
         nbDecoupage = gameModel.getNbDecoupage();
@@ -156,8 +160,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         if(timer != null){
             timer.stop();
         }          
-        timerMin = secValue;
-        timerSec = minValue;
+        timerMin = minValue;
+        timerSec = secValue;
         timer.start();
     }
     ActionListener timerUpdate = new ActionListener() {
@@ -229,6 +233,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private void checkIfGameEnd(){ 
         int sommeEnCours = Integer.parseInt(lblSommeCoursChiffre.getText());
         int sommeAAvoir = Integer.parseInt(lblChiffreSomme.getText());
+        System.out.println("groups passé : " + groups);
+        System.out.println("decoupage passé : " + nbDecoupage);
         int validationResult = valid.checkGameOver(sommeEnCours, sommeAAvoir,groups, 
                 nbDecoupage,noise,mean,listLabelDigits,listLabel);
         if(validationResult == 1){
@@ -240,7 +246,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     }
     private void gameOver(){
         for (int i = 0; i < listLabel.size(); i++) {
-rawr            listLabel.get(i).removeMouseListener(this);
+            listLabel.get(i).removeMouseListener(this);
             listLabel.get(i).setBackground(Color.RED);
             timer.stop();
         }  
@@ -260,7 +266,9 @@ rawr            listLabel.get(i).removeMouseListener(this);
      */
     private void changeDigitColor(JLabel labelClicked){
         labelClicked.setBackground(colors[groups]);
+        System.out.println("groupe depart : " + groups);
         groups++;
+        System.out.println("groupe fin : " + groups);
         lblGroupsValue.setText(String.valueOf(groups));
         checkIfGameEnd();
         this.updateUI();
@@ -322,6 +330,58 @@ rawr            listLabel.get(i).removeMouseListener(this);
 
     @Override
     public void mouseExited(MouseEvent me) {
+    }
+    
+    private void setReplayValue(){
+        gameModel.setListeChiffres(listGameObject.get(currentReplay).listDigits);
+        gameModel.setListeNombres(listGameObject.get(currentReplay).listNumbers);
+        gameModel.setNbDecoupage(Integer.parseInt(listGameObject.get(currentReplay).nbDecoupage));
+        panelDigits.removeAll();
+        panelDigits.setLayout(new GridLayout());        
+        changeDigits();
+        resetValue();
+        modeReplay = true;
+        modeEntrainement = false;
+        modeArcade = false;
+        checkMean.setEnabled(true);
+        checkNoHelp.setEnabled(true);
+        checkNoise.setEnabled(true);
+        checkReverse.setEnabled(true);
+        //Insertion des valeurs de la sauvegarde
+        lblChiffreSomme.setText(listGameObject.get(currentReplay).somme);
+        nbReset = Integer.parseInt(listGameObject.get(currentReplay).reset);
+        lblResetNumberValue.setText(listGameObject.get(currentReplay).reset);
+        noise = listGameObject.get(currentReplay).noise;
+        checkNoise.setSelected(listGameObject.get(currentReplay).noise);
+        checkNoise.setEnabled(false);
+        mean = listGameObject.get(currentReplay).mean;
+        checkMean.setSelected(listGameObject.get(currentReplay).mean);
+        checkMean.setEnabled(false);
+        noHelp = listGameObject.get(currentReplay).noHelp;
+        checkNoHelp.setSelected(listGameObject.get(currentReplay).noHelp);
+        if(listGameObject.get(currentReplay).noHelp){
+            System.out.println("test");
+        }
+        checkNoHelp.setEnabled(false);
+        reverse = listGameObject.get(currentReplay).reverse;
+        checkReverse.setSelected(listGameObject.get(currentReplay).reverse);
+        checkReverse.setEnabled(false);
+        timerMinSave = Integer.parseInt(listGameObject.get(currentReplay).timerMin);
+        timerSecSave = Integer.parseInt(listGameObject.get(currentReplay).timerSec);
+        resetTimer(timerMinSave, timerSecSave);
+        gameModel.setNoisePosition(Integer.parseInt(listGameObject.get(currentReplay).noisePosition));
+        gameModel.setSomme(Integer.parseInt(listGameObject.get(currentReplay).somme)); 
+        if(!checkIfNextReplayAvailable()){
+            btnNext.setEnabled(false);
+        }
+        this.updateUI();
+    }
+    
+    private boolean checkIfNextReplayAvailable(){
+        if(listGameObject.size() > currentReplay + 1){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -669,8 +729,16 @@ rawr            listLabel.get(i).removeMouseListener(this);
      * @param evt Le clic
      */
     private void btnNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNextMouseClicked
-        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
-        setNewValues();    
+        if(btnNext.isEnabled()){
+            if(modeReplay){
+                currentReplay++;   
+                setReplayValue();
+            }
+            else{
+                this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
+                setNewValues();
+            }
+        }
     }//GEN-LAST:event_btnNextMouseClicked
     /***
      * Quand le bouton reset est cliqué, les valeurs sont remisent à zéro
@@ -680,6 +748,8 @@ rawr            listLabel.get(i).removeMouseListener(this);
         if(modeArcade){
             nbPoints = valid.findNewPointsTotal(nbPoints, -3);        
             lblPointsValue.setText(String.valueOf(nbPoints));
+            nbReset++; 
+            resetValue();
         }
         if(modeReplay){
             nbReset--; 
@@ -687,6 +757,9 @@ rawr            listLabel.get(i).removeMouseListener(this);
                 nbReset = 0;
                 gameOver(); 
                 updateUI();            
+            }
+            else{
+                resetValue();
             }
         }
         else{
@@ -804,48 +877,11 @@ rawr            listLabel.get(i).removeMouseListener(this);
 
     private void radioReplayItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioReplayItemStateChanged
         if(radioReplay.isSelected()){
-            ArrayList<GameObject> g = save.readFile();
-            if(g != null){
-                gameModel.setListeChiffres(g.get(0).listDigits);
-                gameModel.setListeNombres(g.get(0).listNumbers);
-                panelDigits.removeAll();
-                panelDigits.setLayout(new GridLayout());        
-                changeDigits();
-                resetValue();
-                modeReplay = true;
-                modeEntrainement = false;
-                modeArcade = false;
-                checkMean.setEnabled(true);
-                checkNoHelp.setEnabled(true);
-                checkNoise.setEnabled(true);
-                checkReverse.setEnabled(true);
-                //Insertion des valeurs de la sauvegarde
-                lblChiffreSomme.setText(g.get(0).somme);
-                nbReset = Integer.parseInt(g.get(0).reset);
-                lblResetNumberValue.setText(g.get(0).reset);
-                noise = g.get(0).noise;
-                checkNoise.setSelected(g.get(0).noise);
-                checkNoise.setEnabled(false);
-                mean = g.get(0).mean;
-                checkMean.setSelected(g.get(0).mean);
-                checkMean.setEnabled(false);
-                noHelp = g.get(0).noHelp;
-                checkNoHelp.setSelected(g.get(0).noHelp);
-                checkNoHelp.setEnabled(false);
-                reverse = g.get(0).reverse;
-                checkReverse.setSelected(g.get(0).reverse);
-                checkReverse.setEnabled(false);
-                timerMinSave = Integer.parseInt(g.get(0).timerMin);
-                timerSecSave = Integer.parseInt(g.get(0).timerSec);
-                resetTimer(timerMinSave, timerSecSave);
-                gameModel.setNbDecoupage(Integer.parseInt(g.get(0).nbDecoupage));
-                gameModel.setNoisePosition(Integer.parseInt(g.get(0).noisePosition));
-                gameModel.setSomme(Integer.parseInt(g.get(0).somme));
-                
-                
-                this.updateUI();
-                
-                
+            listGameObject = new ArrayList();
+            listGameObject = save.readFile();
+            if(listGameObject != null){
+                currentReplay = 0;
+                setReplayValue();
             }
             else{                
                 JOptionPane.showMessageDialog(null, "Aucune sauvegarde disponible, retour au mode entrainnement");
