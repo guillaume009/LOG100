@@ -46,13 +46,6 @@ public class saveData {
             bw.write(String.valueOf(trainning) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(noisePosition) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(nbDecoupage) + System.getProperty( "line.separator" ));            
-            /*for(int i = 0; i < listLabel.size(); i++){
-                bw.write(reset);
-                bw.write(listLabel.get(i).getText() + ";");
-                Color color = listLabel.get(i).getBackground();
-                bw.write(String.format("#%06x", color.getRGB() & 0x00FFFFFF));
-                bw.write(System.getProperty( "line.separator" ));
-            }*/
             bw.write(String.valueOf(listNumbers.size()) + System.getProperty( "line.separator" ));
             for (int i = 0; i < listNumbers.size(); i++) {
                 bw.write(String.valueOf(listNumbers.get(i)) + System.getProperty( "line.separator" ));
@@ -109,12 +102,12 @@ public class saveData {
                     int listNumbersLength = Integer.parseInt(tabGameValue[16]);
                     ArrayList listNumbers = new ArrayList();
                     for (int j = 0; j < listNumbersLength; j++) {
-                        listNumbers.add(tabGameValue[17 + j]);
+                        listNumbers.add(Integer.parseInt(tabGameValue[17 + j]));
                     }
                     int listDigitsLength = Integer.parseInt(tabGameValue[listNumbersLength + 17]);
                     ArrayList listDigits = new ArrayList();
                     for (int j = 0; j < listDigitsLength; j++) {
-                        listDigits.add(tabGameValue[listNumbersLength + 18 +j]);
+                        listDigits.add(Integer.parseInt(tabGameValue[listNumbersLength + 18 +j]));
                     }
                     g.listNumbers = listNumbers;
                     g.listDigits = listDigits;
@@ -130,9 +123,5 @@ public class saveData {
             e.printStackTrace();
         }
         return listGameObject;
-    }
-    
-    private void splitLabelValue(String labelValue){
-        
     }
 }
