@@ -6,6 +6,7 @@
 package labo1;
 
 import java.util.ArrayList;
+import javax.swing.JLabel;
 
 /**
  *
@@ -28,5 +29,7 @@ public class GameObject {
     public boolean trainning;
     public String noisePosition;
     public String nbDecoupage;
-    public ArrayList listLabel;
+    public ArrayList<JLabel> listLabel = new ArrayList<>();
+    public ArrayList listNumbers = new ArrayList();
+    public ArrayList listDigits = new ArrayList();
 }

@@ -125,6 +125,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblSommeCoursChiffre.setText("0");
         lblGroupsValue.setText("0");
         groups = 0;        
+        btnSave.setEnabled(false);
         if(noHelp){
             lblSommeCoursChiffre.setVisible(false);
             lblGroupsValue.setVisible(false);
@@ -215,16 +216,26 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         int validationResult = valid.checkGameOver(sommeEnCours, sommeAAvoir,groups, 
                 nbDecoupage,noise,mean,listLabelDigits,listLabel);
         if(validationResult == 1){
-            for (int i = 0; i < listLabel.size(); i++) {
-                listLabel.get(i).setBackground(Color.GREEN);
-                timer.stop();
-            }
+            gameWin();
         }
         else if (validationResult == 2){            
-            for (int i = 0; i < listLabel.size(); i++) {
-                listLabel.get(i).setBackground(Color.RED);
-                timer.stop();
-            }  
+            gameOver();
+        }
+    }
+    private void gameOver(){
+        for (int i = 0; i < listLabel.size(); i++) {
+            listLabel.get(i).setBackground(Color.RED);
+            timer.stop();
+        }  
+        System.out.println("over");
+    }
+    private void gameWin(){
+        for (int i = 0; i < listLabel.size(); i++) {
+            listLabel.get(i).setBackground(Color.GREEN);
+            timer.stop();
+            if(!modeReplay){
+                btnSave.setEnabled(true);
+            }
         }
     }
     /***
@@ -264,11 +275,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         String newTotal = "";
         Color c = Color.decode("0X00FFFF");
         boolean orderValid = true;
-        /*if(listDrag.size() >= 2){ //Vérifie si la selection de plusieurs chiffre est de gauche à droite
-           if(listDrag.get(0).getX() > listDrag.get(1).getX()){
-              orderValid = false;
-           }
-        }*/
         if(orderValid){
             changeDigitColor(listDrag.get(0));
             c = listDrag.get(0).getBackground();
@@ -659,7 +665,17 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             nbPoints = valid.findNewPointsTotal(nbPoints, -3);        
             lblPointsValue.setText(String.valueOf(nbPoints));
         }
-        nbReset++;
+        if(modeReplay){
+            nbReset--; 
+            if(nbReset <= 0){
+                System.out.println("into");
+                gameOver();
+                this.updateUI();
+            }
+        }
+        else{
+          nbReset++;  
+        }        
         lblResetNumberValue.setText(String.valueOf(nbReset));
         resetValue();
     }//GEN-LAST:event_btnResetMouseClicked
@@ -769,6 +785,12 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         if(radioReplay.isSelected()){
             ArrayList<GameObject> g = save.readFile();
             if(g != null){
+                gameModel.setListeChiffres(g.get(0).listDigits);
+                gameModel.setListeNombres(g.get(0).listNumbers);
+                panelDigits.removeAll();
+                panelDigits.setLayout(new GridLayout());        
+                changeDigits();
+                resetValue();
                 modeReplay = true;
                 modeEntrainement = false;
                 modeArcade = false;
@@ -776,8 +798,33 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 checkNoHelp.setEnabled(true);
                 checkNoise.setEnabled(true);
                 checkReverse.setEnabled(true);
-                lblChiffreSomme.setText(g.get(1).somme);
-                lblSommeCoursChiffre.setText(g.get(1).sommeEnCours);
+                //Insertion des valeurs de la sauvegarde
+                lblChiffreSomme.setText(g.get(0).somme);
+                nbReset = Integer.parseInt(g.get(0).reset);
+                //Max reset
+                lblResetNumberValue.setText(g.get(0).reset);
+                noise = g.get(0).noise;
+                checkNoise.setSelected(g.get(0).noise);
+                checkNoise.setEnabled(false);
+                mean = g.get(0).mean;
+                checkMean.setSelected(g.get(0).mean);
+                checkMean.setEnabled(false);
+                noHelp = g.get(0).noHelp;
+                checkNoHelp.setSelected(g.get(0).noHelp);
+                checkNoHelp.setEnabled(false);
+                reverse = g.get(0).reverse;
+                checkReverse.setSelected(g.get(0).reverse);
+                checkReverse.setEnabled(false);
+                timerMin = Integer.parseInt(g.get(0).timerMin);
+                timerSec = Integer.parseInt(g.get(0).timerSec);
+                //Countdown
+                gameModel.setNbDecoupage(Integer.parseInt(g.get(0).nbDecoupage));
+                gameModel.setNoisePosition(Integer.parseInt(g.get(0).noisePosition));
+                gameModel.setSomme(Integer.parseInt(g.get(0).somme));
+                
+                
+                this.updateUI();
+                
                 
             }
             else{                
@@ -795,7 +842,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         save.saveToFile(gameModel.getSomme(),lblSommeCoursChiffre.getText(),groups,
                 lblResetNumberValue.getText(),noise,mean,noHelp,reverse,timerMin,
                 timerSec,nbPoints,radioArcade.isSelected(),radioReplay.isSelected(),radioTraining.isSelected(),
-                gameModel.getNoisePosition(),gameModel.getNbDecoupage(),listLabel);
+                gameModel.getNoisePosition(),gameModel.getNbDecoupage(),listLabel,gameModel.getListeNombres(),gameModel.getListeChiffres());
+        btnSave.setEnabled(false);
+        JOptionPane.showMessageDialog(null, "Partie sauvegardée");        
     }//GEN-LAST:event_btnSaveMouseClicked
 
 

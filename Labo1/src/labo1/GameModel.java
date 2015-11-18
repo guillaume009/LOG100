@@ -41,17 +41,32 @@ public class GameModel {
     public int getSomme(){
         return totalToGet;
     } 
+    public void setSomme(int somme){
+        totalToGet = somme;
+    }
     public ArrayList getListeNombres(){
         return listNumbers;
     } 
+    public void setListeNombres(ArrayList liste){
+        listNumbers = liste;
+    }
     public ArrayList getListeChiffres(){
         return listDigits;
+    }
+    public void setListeChiffres(ArrayList liste){
+        listDigits = liste;
     }
     public int getNoisePosition(){
         return noisePosition;
     }
+    public void setNoisePosition(int position){
+        noisePosition = position;
+    }
     public int getNbDecoupage(){
         return nbDecoupage;
+    }
+    public void setNbDecoupage(int decoupage){
+        nbDecoupage = decoupage;
     }
     /***
      * Créer des nouveaux nombres 

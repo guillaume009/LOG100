@@ -22,7 +22,7 @@ import javax.swing.JLabel;
 public class saveData {
     public void saveToFile(int somme, String sommeEnCours, int groups, String reset, boolean noise, 
             boolean mean, boolean noHelp, boolean reverse, int timerMin, int timerSec, 
-            int nbPoints,boolean arcade, boolean replay, boolean trainning,int noisePosition, int nbDecoupage,ArrayList<JLabel> listLabel){
+            int nbPoints,boolean arcade, boolean replay, boolean trainning,int noisePosition, int nbDecoupage,ArrayList<JLabel> listLabel,ArrayList listNumbers,ArrayList listDigits){
         try {
             File file = new File("saves.txt");
             if(!file.exists()){
@@ -45,12 +45,21 @@ public class saveData {
             bw.write(String.valueOf(replay) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(trainning) + System.getProperty( "line.separator" ));
             bw.write(String.valueOf(noisePosition) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(nbDecoupage) + System.getProperty( "line.separator" ));
-            for(int i = 0; i < listLabel.size(); i++){
+            bw.write(String.valueOf(nbDecoupage) + System.getProperty( "line.separator" ));            
+            /*for(int i = 0; i < listLabel.size(); i++){
                 bw.write(reset);
                 bw.write(listLabel.get(i).getText() + ";");
-                bw.write(String.valueOf(listLabel.get(i).getBackground()));
+                Color color = listLabel.get(i).getBackground();
+                bw.write(String.format("#%06x", color.getRGB() & 0x00FFFFFF));
                 bw.write(System.getProperty( "line.separator" ));
+            }*/
+            bw.write(String.valueOf(listNumbers.size()) + System.getProperty( "line.separator" ));
+            for (int i = 0; i < listNumbers.size(); i++) {
+                bw.write(String.valueOf(listNumbers.get(i)) + System.getProperty( "line.separator" ));
+            }
+            bw.write(String.valueOf(listDigits.size()) + System.getProperty( "line.separator" ));
+            for (int i = 0; i < listDigits.size(); i++) {
+                bw.write(String.valueOf(listDigits.get(i)) + System.getProperty( "line.separator" ));
             }
             bw.write("//");
             bw.close();
@@ -81,7 +90,6 @@ public class saveData {
                 if(!tabGames[i].equals("\n")){
                     g = new GameObject();
                     tabGameValue = tabGames[i].split("\n");
-
                     g.somme = tabGameValue[0];
                     g.sommeEnCours = tabGameValue[1];
                     g.groups = tabGameValue[2];
@@ -98,11 +106,18 @@ public class saveData {
                     g.trainning = Boolean.getBoolean(tabGameValue[13]);
                     g.noisePosition = tabGameValue[14];
                     g.nbDecoupage = tabGameValue[15];
-                    String[] JLabelValue = tabGameValue[16].split(";");
-                    char[] digits = JLabelValue[0].toCharArray();
-                    JLabel label = new JLabel();
-                    label.setText(String.valueOf(digits[1]));
-                    //label.setBackground((Color)JLabelValue[1]);
+                    int listNumbersLength = Integer.parseInt(tabGameValue[16]);
+                    ArrayList listNumbers = new ArrayList();
+                    for (int j = 0; j < listNumbersLength; j++) {
+                        listNumbers.add(tabGameValue[17 + j]);
+                    }
+                    int listDigitsLength = Integer.parseInt(tabGameValue[listNumbersLength + 17]);
+                    ArrayList listDigits = new ArrayList();
+                    for (int j = 0; j < listDigitsLength; j++) {
+                        listDigits.add(tabGameValue[listNumbersLength + 18 +j]);
+                    }
+                    g.listNumbers = listNumbers;
+                    g.listDigits = listDigits;
                     listGameObject.add(g);
                 }
             }
