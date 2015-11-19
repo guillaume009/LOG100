@@ -13,6 +13,14 @@ import javax.swing.JLabel;
  * @author Guillaume
  */
 public class GameObject {
+    /*public GameModel gameModel;
+    private ArrayList listLabelDigits;//Liste des label qu'il faut cliquer
+    private boolean isDragging;//Si le joueur est en train de drag
+    private boolean modeEntrainement;//Si le mode entrainement est actif
+    private boolean modeArcade;// Si le mode arcade est actif
+    private boolean modeReplay;//Si le mode replay est actif
+    private int nbReset;//Nombre de fois que le jeu a été réinitialisé*/
+    
     public String somme;
     public String sommeEnCours;
     public String groups;

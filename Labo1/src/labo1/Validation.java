@@ -114,7 +114,12 @@ public class Validation {
         }
         return digitRemaining;
     }
-    
+    /***
+     * Trouve le nouveau total pour les points
+     * @param currentPoints les points avant l'action
+     * @param pointChange les points à modifier
+     * @return le nouveau nombre de points
+     */
     public int findNewPointsTotal(int currentPoints, int pointChange){
         int pointTotal = currentPoints;        
         pointTotal = pointTotal + pointChange;
