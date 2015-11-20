@@ -20,9 +20,9 @@ import javax.swing.JLabel;
  * @author Guillaume
  */
 public class saveData {
-    public void saveToFile(int somme, String sommeEnCours, int groups, String reset, boolean noise, 
+    public void saveToFile(GameObject game/*int somme, String sommeEnCours, int groups, String reset, boolean noise, 
             boolean mean, boolean noHelp, boolean reverse, int timerMin, int timerSec, 
-            int nbPoints,boolean arcade, boolean replay, boolean trainning,int noisePosition, int nbDecoupage,ArrayList<JLabel> listLabel,ArrayList listNumbers,ArrayList listDigits){
+            int nbPoints,boolean arcade, boolean replay, boolean trainning,int noisePosition, int nbDecoupage,ArrayList<JLabel> listLabel,ArrayList listNumbers,ArrayList listDigits*/){
         try {
             File file = new File("saves.txt");
             if(!file.exists()){
@@ -30,30 +30,28 @@ public class saveData {
             } 
             FileWriter fw = new FileWriter(file,true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(String.valueOf(somme) + System.getProperty( "line.separator" ));
-            bw.write(sommeEnCours + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(groups) + System.getProperty( "line.separator" ));
-            bw.write(reset + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(noise) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(mean) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(noHelp) + System.getProperty( "line.separator" ));
-            System.out.println(" string value no help : " + String.valueOf(noHelp));
-            bw.write(String.valueOf(reverse) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(timerMin) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(timerSec) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(nbPoints) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(arcade) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(replay) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(trainning) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(noisePosition) + System.getProperty( "line.separator" ));
-            bw.write(String.valueOf(nbDecoupage) + System.getProperty( "line.separator" ));            
-            bw.write(String.valueOf(listNumbers.size()) + System.getProperty( "line.separator" ));
-            for (int i = 0; i < listNumbers.size(); i++) {
-                bw.write(String.valueOf(listNumbers.get(i)) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.gameModel.getSomme()) + System.getProperty( "line.separator" ));
+            bw.write(game.reset + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.noise) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.mean) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.noHelp) + System.getProperty( "line.separator" ));
+            System.out.println(" string value no help : " + String.valueOf(game.noHelp));
+            bw.write(String.valueOf(game.reverse) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.timerMin) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.timerSec) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.nbPoints) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.modeArcade) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.modeReplay) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.modeEntrainement) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.gameModel.getNoisePosition()) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.gameModel.getNbDecoupage()) + System.getProperty( "line.separator" ));            
+            bw.write(String.valueOf(game.gameModel.getListeNombres().size()) + System.getProperty( "line.separator" ));
+            for (int i = 0; i < game.gameModel.getListeNombres().size(); i++) {
+                bw.write(String.valueOf(game.gameModel.getListeNombres().get(i)) + System.getProperty( "line.separator" ));
             }
-            bw.write(String.valueOf(listDigits.size()) + System.getProperty( "line.separator" ));
-            for (int i = 0; i < listDigits.size(); i++) {
-                bw.write(String.valueOf(listDigits.get(i)) + System.getProperty( "line.separator" ));
+            bw.write(String.valueOf(game.listDigits.size()) + System.getProperty( "line.separator" ));
+            for (int i = 0; i < game.listDigits.size(); i++) {
+                bw.write(String.valueOf(game.listDigits.get(i)) + System.getProperty( "line.separator" ));
             }
             bw.write("//");
             bw.close();
@@ -84,32 +82,30 @@ public class saveData {
                 if(!tabGames[i].equals("\n")){
                     g = new GameObject();
                     tabGameValue = tabGames[i].split("\n");
-                    g.somme = tabGameValue[0];
-                    g.sommeEnCours = tabGameValue[1];
-                    g.groups = tabGameValue[2];
-                    g.reset = tabGameValue[3];
-                    g.noise = getBoolFromString(tabGameValue[4]);
-                    g.mean = getBoolFromString(tabGameValue[5]);
-                    g.noHelp = getBoolFromString(tabGameValue[6]);
-                    System.out.println(g.noHelp);
-                    g.reverse = getBoolFromString(tabGameValue[7]);
-                    g.timerMin = tabGameValue[8];
-                    g.timerSec = tabGameValue[9];
-                    g.nbPoints = tabGameValue[10];
-                    g.arcade = getBoolFromString(tabGameValue[11]);
-                    g.replay = getBoolFromString(tabGameValue[12]);
-                    g.trainning = getBoolFromString(tabGameValue[13]);
-                    g.noisePosition = tabGameValue[14];
-                    g.nbDecoupage = tabGameValue[15];
-                    int listNumbersLength = Integer.parseInt(tabGameValue[16]);
+                    g.gameModel = new GameModel();
+                    g.gameModel.setSomme(Integer.parseInt(tabGameValue[0]));
+                    g.nbReset = Integer.parseInt(tabGameValue[1]);
+                    g.noise = getBoolFromString(tabGameValue[2]);
+                    g.mean = getBoolFromString(tabGameValue[3]);
+                    g.noHelp = getBoolFromString(tabGameValue[4]);
+                    g.reverse = getBoolFromString(tabGameValue[5]);
+                    g.timerMin = Integer.parseInt(tabGameValue[6]);
+                    g.timerSec = Integer.parseInt(tabGameValue[7]);
+                    g.nbPoints = Integer.parseInt(tabGameValue[8]);
+                    g.modeArcade = getBoolFromString(tabGameValue[9]);
+                    g.modeReplay = getBoolFromString(tabGameValue[10]);
+                    g.modeEntrainement = getBoolFromString(tabGameValue[11]);
+                    g.gameModel.setNoisePosition(Integer.parseInt(tabGameValue[12]));
+                    g.gameModel.setNbDecoupage(Integer.parseInt(tabGameValue[13]));
+                    int listNumbersLength = Integer.parseInt(tabGameValue[14]);
                     ArrayList listNumbers = new ArrayList();
                     for (int j = 0; j < listNumbersLength; j++) {
-                        listNumbers.add(Integer.parseInt(tabGameValue[17 + j]));
+                        listNumbers.add(Integer.parseInt(tabGameValue[15 + j]));
                     }
-                    int listDigitsLength = Integer.parseInt(tabGameValue[listNumbersLength + 17]);
+                    int listDigitsLength = Integer.parseInt(tabGameValue[listNumbersLength + 15]);
                     ArrayList listDigits = new ArrayList();
                     for (int j = 0; j < listDigitsLength; j++) {
-                        listDigits.add(Integer.parseInt(tabGameValue[listNumbersLength + 18 +j]));
+                        listDigits.add(Integer.parseInt(tabGameValue[listNumbersLength + 16 +j]));
                     }
                     g.listNumbers = listNumbers;
                     g.listDigits = listDigits;

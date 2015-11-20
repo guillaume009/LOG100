@@ -30,7 +30,7 @@ import javax.swing.border.LineBorder;
  */
 public class GameView extends javax.swing.JPanel implements MouseListener, MouseMotionListener{
 
-    private GameModel gameModel;//Exemplaire de jeu
+    /*private GameModel gameModel;//Exemplaire de jeu
     private ArrayList<JLabel> listLabel;//Liste des label qu'il faut cliquer
     private ArrayList listLabelDigits;//Liste des label qu'il faut cliquer
     private int groups;//Nombre de regroupement
@@ -45,8 +45,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private int nbReset;//Nombre de fois que le jeu a été réinitialisé
     private int nbPoints;//Nombre de point
     private int timerMin;//La valeur des minutes du timer
-    private int timerSec;//La valeur des secondes du timer
+    private int timerSec;//La valeur des secondes du timer*/
     
+    private GameObject gameObject;
     private ArrayList<JLabel> listDrag;//Liste des label qu'il faut cliquer
     private ArrayList<GameObject> listGameObject;//Liste des label qu'il faut cliquer
     private Color[] colors;//Tableau de couleur pour les regroupements
@@ -75,20 +76,20 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private void initFirstTimeComponents(GameModel gameNumbers){
         valid = new Validation();
         save = new saveData();
-        gameModel = gameNumbers; 
-        nbDecoupage = gameModel.getNbDecoupage();
+        gameObject = new GameObject();
+        gameObject.gameModel = gameNumbers; 
         //Initialisation des boolean
-        modeEntrainement = true;
-        modeArcade = false;
-        modeReplay = false;
-        noise = false;
-        mean = false;
-        reverse = false;
-        noHelp = false;
+        gameObject.modeEntrainement = true;
+        gameObject.modeArcade = false;
+        gameObject.modeReplay = false;
+        gameObject.noise = false;
+        gameObject.mean = false;
+        gameObject.reverse = false;
+        gameObject.noHelp = false;
         isDragging = false;
         //Initialisation des ArrayList
         listDrag = new ArrayList<>();
-        listLabelDigits = new ArrayList();
+        gameObject.listLabelDigits = new ArrayList();
         //Initialisation des JPanel
         Border b = BorderFactory.createLineBorder(Color.black);
         pnlInfo.setBackground(Color.WHITE);        
@@ -98,9 +99,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
         //Assignation des valeurs de départ
-        nbPoints = 0;
+        gameObject.nbPoints = 0;
         currentReplay = 0;
-        lblPointsValue.setText(String.valueOf(nbPoints));
+        lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
         //Initialisation du timer
         timer = new Timer(1000, timerUpdate);
         timer.setInitialDelay(1000);
@@ -124,7 +125,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     private void setNewValues(){      
         lblResetNumberValue.setText("0");
-        nbReset = 0;
+        gameObject.nbReset = 0;
         panelDigits.removeAll();
         panelDigits.setLayout(new GridLayout());        
         changeDigits();
@@ -133,28 +134,27 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     /***
      * Réinitialise les actions effectuées
      */
-    private void resetValue(){ 
-        nbDecoupage = gameModel.getNbDecoupage();
-        lblChiffreSomme.setText(String.valueOf(gameModel.getSomme()));
+    private void resetValue(){         
+        lblChiffreSomme.setText(String.valueOf(gameObject.gameModel.getSomme()));
         lblSommeCoursChiffre.setText("0");
         lblGroupsValue.setText("0");
-        groups = 0;        
+        gameObject.groups = 0;        
         btnSave.setEnabled(false);
         btnNext.setEnabled(true);
         isDragging = false;
-        listLabelDigits = new ArrayList();
-        for (int i = 0; i < listLabel.size(); i++) {
-            listLabel.get(i).removeMouseListener(this); // Pour eviter d'avoir plusieurs MouseListener si le bouton "reset" est cliqué plusieurs fois
-            listLabel.get(i).setBackground(Color.WHITE);
-            listLabel.get(i).addMouseListener(this);
+        gameObject.listLabelDigits = new ArrayList();
+        for (int i = 0; i < gameObject.listLabel.size(); i++) {
+            gameObject.listLabel.get(i).removeMouseListener(this); // Pour eviter d'avoir plusieurs MouseListener si le bouton "reset" est cliqué plusieurs fois
+            gameObject.listLabel.get(i).setBackground(Color.WHITE);
+            gameObject.listLabel.get(i).addMouseListener(this);
         }
-        if(modeReplay){
+        if(gameObject.modeReplay){
             resetTimer(timerMinSave,timerSecSave); 
         }
         else{
             resetTimer(0,0); 
         }
-        if(noHelp){
+        if(gameObject.noHelp){
             lblSommeCoursChiffre.setVisible(false);
             lblGroupsValue.setVisible(false);
         }
@@ -173,8 +173,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         if(timer != null){
             timer.stop();
         }          
-        timerMin = minValue;
-        timerSec = secValue;
+        gameObject.timerMin = minValue;
+        gameObject.timerSec = secValue;
         timer.start();
     }
     /***
@@ -182,35 +182,35 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     ActionListener timerUpdate = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-            if(modeReplay){
-                if (timerSec == 00) { 
-                    timerSec = 60;
-                    timerMin--;
+            if(gameObject.modeReplay){
+                if (gameObject.timerSec == 00) { 
+                    gameObject.timerSec = 60;
+                    gameObject.timerMin--;
                 }
-                timerSec--;
-                if(timerMin == 0 && timerSec == 0){
+                gameObject.timerSec--;
+                if(gameObject.timerMin == 0 && gameObject.timerSec == 0){
                     gameOver();
                     updateUI();
                 }
             }
             else{
-                timerSec++;
-                if (timerSec == 60) {
-                    timerSec = 00;
-                    timerMin++;
+                gameObject.timerSec++;
+                if (gameObject.timerSec == 60) {
+                    gameObject.timerSec = 00;
+                    gameObject.timerMin++;
                 }    
-                if (modeArcade){
-                    if ((timerMin >= 1 && timerSec == 30) || (timerMin >= 2 && timerSec == 00)){//-2 points chaque 30 seconde après 1:30 
-                        nbPoints = valid.findNewPointsTotal(nbPoints, -2);
-                        lblPointsValue.setText(String.valueOf(nbPoints));
+                if (gameObject.modeArcade){
+                    if ((gameObject.timerMin >= 1 && gameObject.timerSec == 30) || (gameObject.timerMin >= 2 && gameObject.timerSec == 00)){//-2 points chaque 30 seconde après 1:30 
+                        gameObject.nbPoints = valid.findNewPointsTotal(gameObject.nbPoints, -2);
+                        lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
                     }
                 }
             }       
-            if(timerSec < 10){
-               lblTimeValue.setText(timerMin + ":0" + timerSec); 
+            if(gameObject.timerSec < 10){
+               lblTimeValue.setText(gameObject.timerMin + ":0" + gameObject.timerSec); 
             }
             else{
-                lblTimeValue.setText(timerMin + ":" + timerSec);
+                lblTimeValue.setText(gameObject.timerMin + ":" + gameObject.timerSec);
             }
       }
     };
@@ -218,20 +218,21 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * Affiche de nouveaux chiffres 
      */
     private void changeDigits(){
-        ArrayList listDigits = gameModel.getListeChiffres();
-        listLabel = new ArrayList();
+        gameObject.listDigits = new ArrayList();
+        gameObject.listDigits = gameObject.gameModel.getListeChiffres();
+        gameObject.listLabel = new ArrayList();
         JLabel digitLabel;
         LineBorder line = new LineBorder(Color.BLACK,3,true);
-        for (int i = 0; i < listDigits.size(); i++) {
-            digitLabel = new JLabel(listDigits.get(i).toString());
+        for (int i = 0; i < gameObject.listDigits.size(); i++) {
+            digitLabel = new JLabel(gameObject.listDigits.get(i).toString());
             digitLabel.setFont(new Font("Arial",Font.PLAIN,24));
             digitLabel.setVerticalAlignment(SwingConstants.CENTER);
             digitLabel.setHorizontalAlignment(SwingConstants.CENTER);
             digitLabel.setBorder(line);
             digitLabel.setPreferredSize(new Dimension (100, 100));
             digitLabel.setOpaque(true);
-            listLabel.add(digitLabel);
-            panelDigits.add(listLabel.get(i)); 
+            gameObject.listLabel.add(digitLabel);
+            panelDigits.add(gameObject.listLabel.get(i)); 
         }       
     }    
     /***
@@ -249,8 +250,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private void checkIfGameEnd(){ 
         int sommeEnCours = Integer.parseInt(lblSommeCoursChiffre.getText());
         int sommeAAvoir = Integer.parseInt(lblChiffreSomme.getText());
-        int validationResult = valid.checkGameOver(sommeEnCours, sommeAAvoir,groups, 
-                nbDecoupage,noise,mean,listLabelDigits,listLabel);
+        int validationResult = valid.checkGameOver(sommeEnCours, sommeAAvoir,gameObject.groups, 
+                gameObject.gameModel.getNbDecoupage(),gameObject.noise,gameObject.mean,gameObject.listLabelDigits,gameObject.listLabel);
         if(validationResult == 1){
             gameWin();
         }
@@ -262,9 +263,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * Quand la partie est terminé et que le joueur a perdu
      */
     private void gameOver(){
-        for (int i = 0; i < listLabel.size(); i++) {
-            listLabel.get(i).removeMouseListener(this);
-            listLabel.get(i).setBackground(Color.RED);
+        for (int i = 0; i < gameObject.listLabel.size(); i++) {
+            gameObject.listLabel.get(i).removeMouseListener(this);
+            gameObject.listLabel.get(i).setBackground(Color.RED);
             timer.stop();
         }  
     }
@@ -272,10 +273,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * Quand la partie est terminé et que le joueur a gagné
      */
     private void gameWin(){
-        for (int i = 0; i < listLabel.size(); i++) {
-            listLabel.get(i).setBackground(Color.GREEN);
+        for (int i = 0; i < gameObject.listLabel.size(); i++) {
+            gameObject.listLabel.get(i).setBackground(Color.GREEN);
             timer.stop();
-            if(!modeReplay){
+            if(!gameObject.modeReplay){
                 btnSave.setEnabled(true);
             }
         }
@@ -285,9 +286,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param labelClicked Le label à changer de couleur
      */
     private void changeDigitColor(JLabel labelClicked){
-        labelClicked.setBackground(colors[groups]);
-        groups++;
-        lblGroupsValue.setText(String.valueOf(groups));
+        labelClicked.setBackground(colors[gameObject.groups]);
+        gameObject.groups++;
+        lblGroupsValue.setText(String.valueOf(gameObject.groups));
         checkIfGameEnd();
         this.updateUI();
     }
@@ -300,7 +301,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     public void mousePressed(MouseEvent me) {
         isDragging = true;
         Object event = me.getComponent();        
-        JLabel label = listLabel.get(listLabel.lastIndexOf((JLabel) event));
+        JLabel label = gameObject.listLabel.get(gameObject.listLabel.lastIndexOf((JLabel) event));
         listDrag = new ArrayList<>();    
         listDrag.add(label);
     }
@@ -321,7 +322,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 newTotal += listDrag.get(i).getText();
             }   
         }
-        listLabelDigits.add(Integer.parseInt(newTotal));
+        gameObject.listLabelDigits.add(Integer.parseInt(newTotal));
         setNewCurrentTotalValue(Integer.parseInt(newTotal));        
         checkIfGameEnd();
     }
@@ -343,41 +344,41 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * Prend l'index de la reprise et met les données à jour en fonction des valeurs de la sauvegarde
      */
     private void setReplayValue(){
-        gameModel.setListeChiffres(listGameObject.get(currentReplay).listDigits);
-        gameModel.setListeNombres(listGameObject.get(currentReplay).listNumbers);
-        gameModel.setNbDecoupage(Integer.parseInt(listGameObject.get(currentReplay).nbDecoupage));
+        gameObject.gameModel.setListeChiffres(listGameObject.get(currentReplay).listDigits);
+        gameObject.gameModel.setListeNombres(listGameObject.get(currentReplay).listNumbers);
+        gameObject.gameModel.setNbDecoupage(listGameObject.get(currentReplay).gameModel.getNbDecoupage());
         panelDigits.removeAll();
         panelDigits.setLayout(new GridLayout());        
         changeDigits();
         resetValue();
-        modeReplay = true;
-        modeEntrainement = false;
-        modeArcade = false;
+        gameObject.modeReplay = true;
+        gameObject.modeEntrainement = false;
+        gameObject.modeArcade = false;
         checkMean.setEnabled(true);
         checkNoHelp.setEnabled(true);
         checkNoise.setEnabled(true);
         checkReverse.setEnabled(true);
         //Insertion des valeurs de la sauvegarde
-        lblChiffreSomme.setText(listGameObject.get(currentReplay).somme);
-        nbReset = Integer.parseInt(listGameObject.get(currentReplay).reset);
-        lblResetNumberValue.setText(listGameObject.get(currentReplay).reset);
-        noise = listGameObject.get(currentReplay).noise;
+        lblChiffreSomme.setText(String.valueOf(listGameObject.get(currentReplay).gameModel.getSomme()));
+        gameObject.nbReset = listGameObject.get(currentReplay).reset;
+        lblResetNumberValue.setText(String.valueOf(listGameObject.get(currentReplay).reset));
+        gameObject.noise = listGameObject.get(currentReplay).noise;
         checkNoise.setSelected(listGameObject.get(currentReplay).noise);
         checkNoise.setEnabled(false);
-        mean = listGameObject.get(currentReplay).mean;
+        gameObject.mean = listGameObject.get(currentReplay).mean;
         checkMean.setSelected(listGameObject.get(currentReplay).mean);
         checkMean.setEnabled(false);
-        noHelp = listGameObject.get(currentReplay).noHelp;
+        gameObject.noHelp = listGameObject.get(currentReplay).noHelp;
         checkNoHelp.setSelected(listGameObject.get(currentReplay).noHelp);
         checkNoHelp.setEnabled(false);
-        reverse = listGameObject.get(currentReplay).reverse;
+        gameObject.reverse = listGameObject.get(currentReplay).reverse;
         checkReverse.setSelected(listGameObject.get(currentReplay).reverse);
         checkReverse.setEnabled(false);
-        timerMinSave = Integer.parseInt(listGameObject.get(currentReplay).timerMin);
-        timerSecSave = Integer.parseInt(listGameObject.get(currentReplay).timerSec);
+        timerMinSave = listGameObject.get(currentReplay).timerMin;
+        timerSecSave = listGameObject.get(currentReplay).timerSec;
         resetTimer(timerMinSave, timerSecSave);
-        gameModel.setNoisePosition(Integer.parseInt(listGameObject.get(currentReplay).noisePosition));
-        gameModel.setSomme(Integer.parseInt(listGameObject.get(currentReplay).somme)); 
+        gameObject.gameModel.setNoisePosition(listGameObject.get(currentReplay).gameModel.getNoisePosition());
+        gameObject.gameModel.setSomme(listGameObject.get(currentReplay).gameModel.getSomme()); 
         if(!checkIfNextReplayAvailable()){
             btnNext.setEnabled(false);
         }
@@ -400,7 +401,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         return false;
     }
     private void createNewGameModel(){
-        this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
+        //gameObject = new GameObject();
+        gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade);
+        //this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();
     }
 
@@ -750,12 +753,12 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     private void btnNextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnNextMouseClicked
         if(btnNext.isEnabled()){
-            if(modeReplay){
+            if(gameObject.modeReplay){
                 currentReplay++;   
                 setReplayValue();
             }
             else{
-                this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
+                gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade);
                 setNewValues();
             }
         }
@@ -766,23 +769,23 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         resetValue();
-        if(modeArcade){
-            nbPoints = valid.findNewPointsTotal(nbPoints, -3);        
-            lblPointsValue.setText(String.valueOf(nbPoints));
-            nbReset++; 
+        if(gameObject.modeArcade){
+            gameObject.nbPoints = valid.findNewPointsTotal(gameObject.nbPoints, -3);        
+            lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
+            gameObject.nbReset++; 
         }
-        else if(modeReplay){
-            nbReset--; 
-            if(nbReset < 0){
-                nbReset = 0;
+        else if(gameObject.modeReplay){
+            gameObject.nbReset--; 
+            if(gameObject.nbReset < 0){
+                gameObject.nbReset = 0;
                 gameOver(); 
                 updateUI(); 
             }
         }
-        else if(modeEntrainement){
-          nbReset++; 
-        }        
-        lblResetNumberValue.setText(String.valueOf(nbReset));
+        else if(gameObject.modeEntrainement){
+            gameObject.nbReset++; 
+        }     
+        lblResetNumberValue.setText(String.valueOf(gameObject.nbReset));
         
     }//GEN-LAST:event_btnResetMouseClicked
     /***
@@ -791,25 +794,25 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     private void btnGiveUpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGiveUpMouseClicked
         timer.stop();
-        int noisePosition = gameModel.getNoisePosition();
-        ArrayList listNumbers = gameModel.getListeNombres();
-        lblSommeCoursChiffre.setText(String.valueOf(gameModel.getSomme()));
-        lblGroupsValue.setText(String.valueOf(gameModel.getNbDecoupage()));
-        groups = 0;
+        int noisePosition = gameObject.gameModel.getNoisePosition();
+        ArrayList listNumbers = gameObject.gameModel.getListeNombres();
+        lblSommeCoursChiffre.setText(String.valueOf(gameObject.gameModel.getSomme()));
+        lblGroupsValue.setText(String.valueOf(gameObject.gameModel.getNbDecoupage()));
+        gameObject.groups = 0;
         int k = 0;
         int j = 0;
         while(k < listNumbers.size()){
-            listLabel.get(j).setBackground(colors[groups]);
-            listLabel.get(j).removeMouseListener(this);
+            gameObject.listLabel.get(j).setBackground(colors[gameObject.groups]);
+            gameObject.listLabel.get(j).removeMouseListener(this);
             if((int)listNumbers.get(k) > 9){
-                listLabel.get(j + 1).setBackground(colors[groups]);
-                listLabel.get(j + 1).removeMouseListener(this);
+                gameObject.listLabel.get(j + 1).setBackground(colors[gameObject.groups]);
+                gameObject.listLabel.get(j + 1).removeMouseListener(this);
                 j++;
             }
             else if(k == noisePosition){
-              listLabel.get(j).setBackground(Color.BLACK); 
+              gameObject.listLabel.get(j).setBackground(Color.BLACK); 
             }
-            groups++;
+            gameObject.groups++;
             j++;
             k++;
         }        
@@ -817,48 +820,49 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     }//GEN-LAST:event_btnGiveUpMouseClicked
 
     private void checkNoiseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoiseItemStateChanged
-        noise = checkBooleanValue(checkNoise.isSelected());
+        gameObject.noise = checkBooleanValue(checkNoise.isSelected());
         createNewGameModel();
     }//GEN-LAST:event_checkNoiseItemStateChanged
 
     private void checkMeanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkMeanItemStateChanged
-        mean = checkBooleanValue(checkMean.isSelected());
+        gameObject.mean = checkBooleanValue(checkMean.isSelected());
         createNewGameModel();
     }//GEN-LAST:event_checkMeanItemStateChanged
 
     private void checkNoHelpItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoHelpItemStateChanged
-        noHelp = checkBooleanValue(checkNoHelp.isSelected());
+        gameObject.noHelp = checkBooleanValue(checkNoHelp.isSelected());
         createNewGameModel();
     }//GEN-LAST:event_checkNoHelpItemStateChanged
 
     private void checkReverseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkReverseItemStateChanged
-        reverse = checkBooleanValue(checkReverse.isSelected());
+        gameObject.reverse = checkBooleanValue(checkReverse.isSelected());
         createNewGameModel();
     }//GEN-LAST:event_checkReverseItemStateChanged
 
     private void radioTrainingItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioTrainingItemStateChanged
         if(radioTraining.isSelected()){
-            modeEntrainement = true;
-            modeArcade = false;
-            modeReplay = false;
+            createNewGameModel();
+            gameObject.modeEntrainement = true;
+            gameObject.modeArcade = false;
+            gameObject.modeReplay = false;
             checkMean.setEnabled(true);
             checkNoHelp.setEnabled(true);
             checkNoise.setEnabled(true);
             checkReverse.setEnabled(true);
-            createNewGameModel();
+            
         }
     }//GEN-LAST:event_radioTrainingItemStateChanged
 
     private void radioArcadeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioArcadeItemStateChanged
         if(radioArcade.isSelected()){
-            modeArcade = true;
-            modeEntrainement = false;
-            modeReplay = false;            
+            createNewGameModel();
+            gameObject.modeArcade = true;
+            gameObject.modeEntrainement = false;
+            gameObject.modeReplay = false;            
             checkMean.setEnabled(false);
             checkNoHelp.setEnabled(false);
             checkNoise.setEnabled(false);
             checkReverse.setEnabled(false);
-            createNewGameModel();
         }
     }//GEN-LAST:event_radioArcadeItemStateChanged
 
@@ -880,10 +884,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     }//GEN-LAST:event_radioReplayItemStateChanged
 
     private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
-        save.saveToFile(gameModel.getSomme(),lblSommeCoursChiffre.getText(),groups,
+        save.saveToFile(gameObject/*gameModel.getSomme(),lblSommeCoursChiffre.getText(),groups,
                 lblResetNumberValue.getText(),noise,mean,noHelp,reverse,timerMin,
                 timerSec,nbPoints,radioArcade.isSelected(),radioReplay.isSelected(),radioTraining.isSelected(),
-                gameModel.getNoisePosition(),gameModel.getNbDecoupage(),listLabel,gameModel.getListeNombres(),gameModel.getListeChiffres());
+                gameModel.getNoisePosition(),gameModel.getNbDecoupage(),listLabel,gameModel.getListeNombres(),gameModel.getListeChiffres()*/);
         btnSave.setEnabled(false);
         JOptionPane.showMessageDialog(null, "Partie sauvegardée");        
     }//GEN-LAST:event_btnSaveMouseClicked
