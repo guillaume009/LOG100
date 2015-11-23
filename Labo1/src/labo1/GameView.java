@@ -1,14 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package labo1;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -17,10 +15,10 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -30,23 +28,6 @@ import javax.swing.border.LineBorder;
  */
 public class GameView extends javax.swing.JPanel implements MouseListener, MouseMotionListener{
 
-    /*private GameModel gameModel;//Exemplaire de jeu
-    private ArrayList<JLabel> listLabel;//Liste des label qu'il faut cliquer
-    private ArrayList listLabelDigits;//Liste des label qu'il faut cliquer
-    private int groups;//Nombre de regroupement
-    private int nbDecoupage;//Nombre de découpage qu'il faut avoir
-    private boolean noise;//Si le noise est activé
-    private boolean mean;//Si le mean est activé
-    private boolean noHelp;//Si le no help est activé
-    private boolean reverse;//Si le reverse est activé
-    private boolean modeEntrainement;//Si le mode entrainement est actif
-    private boolean modeArcade;// Si le mode arcade est actif
-    private boolean modeReplay;//Si le mode replay est actif
-    private int nbReset;//Nombre de fois que le jeu a été réinitialisé
-    private int nbPoints;//Nombre de point
-    private int timerMin;//La valeur des minutes du timer
-    private int timerSec;//La valeur des secondes du timer*/
-    
     private GameObject gameObject;
     private ArrayList<JLabel> listDrag;//Liste des label qu'il faut cliquer
     private ArrayList<GameObject> listGameObject;//Liste des label qu'il faut cliquer
@@ -62,7 +43,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     "0XF4C2C2", "0X98777B", "0XFFBF00", "0XFBCEB1", "0XF0F8FF", "0X6495ED",
     "0X654321", "0X9BDDFF", "0XFBEC5D","0XFF7F50", "0X00FFFF", "0X99BADD",
     "0XF0E130", "0XFFF8DC"};//Liste de couleur à utiliser pour les regroupements
-    
+     Image bg = new ImageIcon("image.jpg").getImage();
+    @Override
+    public void paintComponent(Graphics g) {
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+    }
     /***
      * Initialise la fenêtre de jeu
      * @param gameNumbers Le model qui contient les labels avec les chiffres
@@ -74,6 +59,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         setNewValues();          
     }
     private void initFirstTimeComponents(GameModel gameNumbers){
+        panelBackground.setOpaque(false);
+        //panelBackground.setLayout(new FlowLayout());
         valid = new Validation();
         save = new saveData();
         gameObject = new GameObject();
@@ -91,7 +78,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         listDrag = new ArrayList<>();
         gameObject.listLabelDigits = new ArrayList();
         //Initialisation des JPanel
-        Border b = BorderFactory.createLineBorder(Color.black);
+        Border b = BorderFactory.createLineBorder(Color.BLACK,3,true);
         pnlInfo.setBackground(Color.WHITE);        
         pnlCheckBox.setBackground(Color.WHITE);
         pnlGameMode.setBackground(Color.WHITE);
@@ -316,7 +303,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         changeDigitColor(listDrag.get(0));
         Color c = listDrag.get(0).getBackground();
         for (int i = 0; i < listDrag.size(); i++) {
-            if(i < 2){ // Évite de selectionner des nombres de 3 chiffres
+            if(i < 2){ // Empêche de selectionner des nombres de 3 chiffres
                 listDrag.get(i).setBackground(c);
                 listDrag.get(i).removeMouseListener(this);
                 newTotal += listDrag.get(i).getText();
@@ -394,16 +381,22 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         }
         return false;
     }
+    /***
+     * Retourne la valeur d'un boolea
+     * @param b le boolean à vérifier
+     * @return la valeur vrai ou faux du boolean
+     */
     private boolean checkBooleanValue(boolean b){
         if (b){
             return true;
         }
         return false;
     }
+    /***
+     * Créer un nouveau jeu et modifie les valeurs
+     */
     private void createNewGameModel(){
-        //gameObject = new GameObject();
         gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade);
-        //this.gameModel = new GameModel(noise,mean,reverse,modeArcade);
         setNewValues();
     }
 
@@ -416,6 +409,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        panelBackground = new javax.swing.JPanel();
         panelDigits = new javax.swing.JPanel();
         pnlInfo = new javax.swing.JPanel();
         btnNext = new javax.swing.JButton();
@@ -430,6 +424,12 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblResetNumber = new javax.swing.JLabel();
         lblResetNumberValue = new javax.swing.JLabel();
         btnRestart = new javax.swing.JButton();
+        pnlGameMode = new javax.swing.JPanel();
+        lblGameMode = new javax.swing.JLabel();
+        radioArcade = new javax.swing.JRadioButton();
+        radioTraining = new javax.swing.JRadioButton();
+        radioReplay = new javax.swing.JRadioButton();
+        btnSave = new javax.swing.JButton();
         pnlCheckBox = new javax.swing.JPanel();
         checkMean = new javax.swing.JCheckBox();
         checkNoise = new javax.swing.JCheckBox();
@@ -439,12 +439,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblTimeValue = new javax.swing.JLabel();
         lblPoints = new javax.swing.JLabel();
         lblPointsValue = new javax.swing.JLabel();
-        pnlGameMode = new javax.swing.JPanel();
-        lblGameMode = new javax.swing.JLabel();
-        radioArcade = new javax.swing.JRadioButton();
-        radioTraining = new javax.swing.JRadioButton();
-        radioReplay = new javax.swing.JRadioButton();
-        btnSave = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(800, 300));
 
@@ -565,6 +559,71 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblChiffreSomme.getAccessibleContext().setAccessibleName("lblChiffreSomme");
         lblSommeCoursChiffre.getAccessibleContext().setAccessibleName("lblSommeCoursChiffre");
 
+        lblGameMode.setText("Mode de jeu :");
+
+        radioArcade.setText("Arcade");
+        radioArcade.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                radioArcadeItemStateChanged(evt);
+            }
+        });
+
+        radioTraining.setText("Entrainnement");
+        radioTraining.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                radioTrainingItemStateChanged(evt);
+            }
+        });
+
+        radioReplay.setText("Replay");
+        radioReplay.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                radioReplayItemStateChanged(evt);
+            }
+        });
+
+        btnSave.setText("Sauver la partie");
+        btnSave.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSaveMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlGameModeLayout = new javax.swing.GroupLayout(pnlGameMode);
+        pnlGameMode.setLayout(pnlGameModeLayout);
+        pnlGameModeLayout.setHorizontalGroup(
+            pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlGameModeLayout.createSequentialGroup()
+                .addGroup(pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlGameModeLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblGameMode)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioArcade)
+                            .addComponent(radioReplay)
+                            .addComponent(radioTraining)))
+                    .addGroup(pnlGameModeLayout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(btnSave)))
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+        pnlGameModeLayout.setVerticalGroup(
+            pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlGameModeLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblGameMode)
+                    .addComponent(radioTraining))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioArcade)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioReplay)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSave)
+                .addContainerGap())
+        );
+
         checkMean.setText("Find mean");
         checkMean.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -651,99 +710,45 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         checkMean.getAccessibleContext().setAccessibleName("checkMean");
         checkNoise.getAccessibleContext().setAccessibleName("checkNoise");
 
-        lblGameMode.setText("Mode de jeu :");
-
-        radioArcade.setText("Arcade");
-        radioArcade.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                radioArcadeItemStateChanged(evt);
-            }
-        });
-
-        radioTraining.setText("Entrainnement");
-        radioTraining.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                radioTrainingItemStateChanged(evt);
-            }
-        });
-
-        radioReplay.setText("Replay");
-        radioReplay.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                radioReplayItemStateChanged(evt);
-            }
-        });
-
-        btnSave.setText("Sauver la partie");
-        btnSave.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnSaveMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout pnlGameModeLayout = new javax.swing.GroupLayout(pnlGameMode);
-        pnlGameMode.setLayout(pnlGameModeLayout);
-        pnlGameModeLayout.setHorizontalGroup(
-            pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlGameModeLayout.createSequentialGroup()
-                .addGroup(pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlGameModeLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lblGameMode)
+        javax.swing.GroupLayout panelBackgroundLayout = new javax.swing.GroupLayout(panelBackground);
+        panelBackground.setLayout(panelBackgroundLayout);
+        panelBackgroundLayout.setHorizontalGroup(
+            panelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBackgroundLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelDigits, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelBackgroundLayout.createSequentialGroup()
+                        .addComponent(pnlInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(radioArcade)
-                            .addComponent(radioReplay)
-                            .addComponent(radioTraining)))
-                    .addGroup(pnlGameModeLayout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(btnSave)))
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-        pnlGameModeLayout.setVerticalGroup(
-            pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlGameModeLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addGroup(pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblGameMode)
-                    .addComponent(radioTraining))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioArcade)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioReplay)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSave)
+                        .addComponent(pnlCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(pnlGameMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 50, Short.MAX_VALUE)))
                 .addContainerGap())
+        );
+        panelBackgroundLayout.setVerticalGroup(
+            panelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBackgroundLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(panelDigits, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlGameMode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelDigits, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pnlCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pnlGameMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+            .addComponent(panelBackground, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panelDigits, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlGameMode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(32, Short.MAX_VALUE))
+            .addComponent(panelBackground, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     /***
@@ -884,10 +889,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     }//GEN-LAST:event_radioReplayItemStateChanged
 
     private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
-        save.saveToFile(gameObject/*gameModel.getSomme(),lblSommeCoursChiffre.getText(),groups,
-                lblResetNumberValue.getText(),noise,mean,noHelp,reverse,timerMin,
-                timerSec,nbPoints,radioArcade.isSelected(),radioReplay.isSelected(),radioTraining.isSelected(),
-                gameModel.getNoisePosition(),gameModel.getNbDecoupage(),listLabel,gameModel.getListeNombres(),gameModel.getListeChiffres()*/);
+        save.saveToFile(gameObject);
         btnSave.setEnabled(false);
         JOptionPane.showMessageDialog(null, "Partie sauvegardée");        
     }//GEN-LAST:event_btnSaveMouseClicked
@@ -916,6 +918,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private javax.swing.JLabel lblSommeCoursChiffre;
     private javax.swing.JLabel lblTime;
     private javax.swing.JLabel lblTimeValue;
+    private javax.swing.JPanel panelBackground;
     private javax.swing.JPanel panelDigits;
     private javax.swing.JPanel pnlCheckBox;
     private javax.swing.JPanel pnlGameMode;
