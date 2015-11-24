@@ -22,6 +22,7 @@ public class GameObject {
     public int timerMin;
     public int timerSec;
     public int nbPoints;
+    public int arcadeLvl;
     
     public boolean noise;
     public boolean mean;

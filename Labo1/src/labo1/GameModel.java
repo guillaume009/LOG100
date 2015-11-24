@@ -18,6 +18,10 @@ public class GameModel {
     private int noisePosition = -1;//Position du chiffre de noise dans la liste
     private int nbDecoupage = 0;//nombre de découpage différent
     private int noiseValue;//valeur du noise
+    private boolean noiseArcade;
+    private boolean reverseArcade;
+    private boolean meanArcade;
+    private boolean noHelpArcade;
     /***
      * Initialise la partie qui contient les chiffres du jeu
      */
@@ -30,9 +34,9 @@ public class GameModel {
      * @param noise Si l'option noise est activé
      * @param mean Si l'option mean est activé
      */
-    public GameModel(boolean noise,boolean mean,boolean reverse,boolean arcade){
+    public GameModel(boolean noise,boolean mean,boolean reverse,boolean arcade,int lvlArcade){
         if(arcade){
-            
+            initialiseNumbersArcade(lvlArcade);
         }
         else{
            initialiseNumbers(noise,mean,reverse); 
@@ -67,6 +71,80 @@ public class GameModel {
     }
     public void setNbDecoupage(int decoupage){
         nbDecoupage = decoupage;
+    }
+    public boolean getNoise(){
+        return noiseArcade;
+    }
+    public boolean getMean(){
+        return meanArcade;
+    }
+    public boolean getReverse(){
+        return reverseArcade;
+    }
+    public boolean getNoHelp(){
+        return noHelpArcade;
+    }
+    private void initialiseNumbersArcade(int lvlArcade){
+        noiseArcade = arcadeOptionProb(lvlArcade);
+        meanArcade = arcadeOptionProb(lvlArcade);
+        reverseArcade = arcadeOptionProb(lvlArcade);
+        noHelpArcade = arcadeOptionProb(lvlArcade);
+        generateListNumbersArcade(lvlArcade);
+        splitListNumbers(reverseArcade);
+        System.out.println("decoupage = " + nbDecoupage);
+        System.out.println("noise = " + noiseArcade);
+        System.out.println("mean = " + meanArcade);
+        System.out.println("noHelp = " + noHelpArcade);
+        System.out.println("reverse = " + reverseArcade);
+        System.out.println("Level = " + lvlArcade);
+        System.out.println("========");
+    }
+    private void generateListNumbersArcade(int lvlArcade){
+        nbDecoupage = (int) (3 + Math.round(3.0 * lvlArcade/20));
+        totalToGet = 0;
+        for(int i = 0; i < nbDecoupage; i++){
+            int newNumber;
+            if(isHigherThan9Arcade(lvlArcade)){
+               newNumber = gerenerateHighRandom();
+            }
+            else{
+               newNumber = gerenerateLowRandom();
+            }            
+            listNumbers.add(newNumber);
+            totalToGet += newNumber;
+        }
+        if(meanArcade){
+            if(totalToGet % nbDecoupage != 0){
+                findNewTotal();      
+            }
+            else{
+                totalToGet = totalToGet / nbDecoupage;
+            }
+        }
+        if(noiseArcade){
+            noiseValue = gerenerateLowRandom();
+            insertNoise();
+        }     
+    }
+    private boolean arcadeOptionProb(int lvlArcade){
+        double possibility = 0.1 + (0.9 * lvlArcade /20);
+        double d = Math.random();
+        if (d >= possibility){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    private boolean isHigherThan9Arcade(int lvlArcade){
+        double probability = 0.3 + (0.3 * lvlArcade /20);
+        double d = Math.random();
+        if (d >= probability){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
     /***
      * Créer des nouveaux nombres 

@@ -59,8 +59,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         setNewValues();          
     }
     private void initFirstTimeComponents(GameModel gameNumbers){
-        panelBackground.setOpaque(false);
-        //panelBackground.setLayout(new FlowLayout());
         valid = new Validation();
         save = new saveData();
         gameObject = new GameObject();
@@ -78,6 +76,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         listDrag = new ArrayList<>();
         gameObject.listLabelDigits = new ArrayList();
         //Initialisation des JPanel
+        panelBackground.setOpaque(false);
         Border b = BorderFactory.createLineBorder(Color.BLACK,3,true);
         pnlInfo.setBackground(Color.WHITE);        
         pnlCheckBox.setBackground(Color.WHITE);
@@ -86,6 +85,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
         //Assignation des valeurs de départ
+        gameObject.arcadeLvl = 0;
         gameObject.nbPoints = 0;
         currentReplay = 0;
         lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
@@ -119,6 +119,27 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         resetValue();
     }
     /***
+     * Affiche de nouveaux chiffres 
+     */
+    private void changeDigits(){
+        gameObject.listDigits = new ArrayList();
+        gameObject.listDigits = gameObject.gameModel.getListeChiffres();
+        gameObject.listLabel = new ArrayList();
+        JLabel digitLabel;
+        LineBorder line = new LineBorder(Color.BLACK,3,true);
+        for (int i = 0; i < gameObject.listDigits.size(); i++) {
+            digitLabel = new JLabel(gameObject.listDigits.get(i).toString());
+            digitLabel.setFont(new Font("Arial",Font.PLAIN,24));
+            digitLabel.setVerticalAlignment(SwingConstants.CENTER);
+            digitLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            digitLabel.setBorder(line);
+            digitLabel.setPreferredSize(new Dimension (100, 100));
+            digitLabel.setOpaque(true);
+            gameObject.listLabel.add(digitLabel);
+            panelDigits.add(gameObject.listLabel.get(i)); 
+        }       
+    }   
+    /***
      * Réinitialise les actions effectuées
      */
     private void resetValue(){         
@@ -127,6 +148,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblGroupsValue.setText("0");
         gameObject.groups = 0;        
         btnSave.setEnabled(false);
+        btnPrevious.setEnabled(false);
         btnNext.setEnabled(true);
         isDragging = false;
         gameObject.listLabelDigits = new ArrayList();
@@ -140,6 +162,17 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         }
         else{
             resetTimer(0,0); 
+        }
+        if(gameObject.modeArcade){
+            btnRestart.setEnabled(true);
+            btnNext.setEnabled(false);
+        }
+        else{
+            lblPoints.setVisible(false);
+            lblPointsValue.setVisible(false);
+            lblLevel.setVisible(false);
+            lblLvlValue.setVisible(false);
+            btnRestart.setEnabled(false);
         }
         if(gameObject.noHelp){
             lblSommeCoursChiffre.setVisible(false);
@@ -201,27 +234,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             }
       }
     };
-    /***
-     * Affiche de nouveaux chiffres 
-     */
-    private void changeDigits(){
-        gameObject.listDigits = new ArrayList();
-        gameObject.listDigits = gameObject.gameModel.getListeChiffres();
-        gameObject.listLabel = new ArrayList();
-        JLabel digitLabel;
-        LineBorder line = new LineBorder(Color.BLACK,3,true);
-        for (int i = 0; i < gameObject.listDigits.size(); i++) {
-            digitLabel = new JLabel(gameObject.listDigits.get(i).toString());
-            digitLabel.setFont(new Font("Arial",Font.PLAIN,24));
-            digitLabel.setVerticalAlignment(SwingConstants.CENTER);
-            digitLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            digitLabel.setBorder(line);
-            digitLabel.setPreferredSize(new Dimension (100, 100));
-            digitLabel.setOpaque(true);
-            gameObject.listLabel.add(digitLabel);
-            panelDigits.add(gameObject.listLabel.get(i)); 
-        }       
-    }    
+ 
     /***
      * Ajoute la valeur du label cliqué au total
      * @param labelClickedValue La valeur du label qui a été cliquer
@@ -263,9 +276,12 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         for (int i = 0; i < gameObject.listLabel.size(); i++) {
             gameObject.listLabel.get(i).setBackground(Color.GREEN);
             timer.stop();
-            if(!gameObject.modeReplay){
-                btnSave.setEnabled(true);
-            }
+        }
+        if(!gameObject.modeReplay){
+            btnSave.setEnabled(true);
+        }
+        if(gameObject.modeArcade){
+            btnNext.setEnabled(true);
         }
     }
     /***
@@ -369,6 +385,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         if(!checkIfNextReplayAvailable()){
             btnNext.setEnabled(false);
         }
+        if(checkIfPreviousReplayAvailable()){
+            btnPrevious.setEnabled(true);
+        }
         this.updateUI();
     }
     /***
@@ -377,6 +396,16 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     private boolean checkIfNextReplayAvailable(){
         if(listGameObject.size() > currentReplay + 1){
+            return true;
+        }
+        return false;
+    }
+        /***
+     * Vérifie s'il y a une sauvegarde précédante disponible
+     * @return vrai ou faux en fonction du résultat
+     */
+    private boolean checkIfPreviousReplayAvailable(){
+        if(currentReplay > 0){
             return true;
         }
         return false;
@@ -396,7 +425,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * Créer un nouveau jeu et modifie les valeurs
      */
     private void createNewGameModel(){
-        gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade);
+        gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade,gameObject.arcadeLvl);
         setNewValues();
     }
 
@@ -423,6 +452,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblGroupsValue = new javax.swing.JLabel();
         lblResetNumber = new javax.swing.JLabel();
         lblResetNumberValue = new javax.swing.JLabel();
+        btnPrevious = new javax.swing.JButton();
         btnRestart = new javax.swing.JButton();
         pnlGameMode = new javax.swing.JPanel();
         lblGameMode = new javax.swing.JLabel();
@@ -439,6 +469,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblTimeValue = new javax.swing.JLabel();
         lblPoints = new javax.swing.JLabel();
         lblPointsValue = new javax.swing.JLabel();
+        lblLevel = new javax.swing.JLabel();
+        lblLvlValue = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(800, 300));
 
@@ -492,6 +524,13 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
 
         lblResetNumberValue.setText("0");
 
+        btnPrevious.setText("Previous");
+        btnPrevious.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnPreviousMouseClicked(evt);
+            }
+        });
+
         btnRestart.setText("Restart");
 
         javax.swing.GroupLayout pnlInfoLayout = new javax.swing.GroupLayout(pnlInfo);
@@ -511,45 +550,52 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                     .addComponent(lblSommeCoursChiffre)
                     .addComponent(lblChiffreSomme)
                     .addComponent(lblResetNumberValue))
-                .addGap(33, 33, 33)
-                .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnGiveUp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnNext, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(btnRestart))
-                .addGap(17, 17, 17))
+                .addGap(29, 29, 29)
+                .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInfoLayout.createSequentialGroup()
+                        .addComponent(btnPrevious)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNext, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE))
+                    .addComponent(btnGiveUp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRestart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
         );
         pnlInfoLayout.setVerticalGroup(
             pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInfoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(lblChiffreSomme))
                     .addGroup(pnlInfoLayout.createSequentialGroup()
-                        .addComponent(btnNext)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(34, 34, 34)
                         .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnGiveUp)
                             .addComponent(jLabel2)
                             .addComponent(lblSommeCoursChiffre))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnReset)
                             .addComponent(lblGroups)
-                            .addComponent(lblGroupsValue))))
-                .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblGroupsValue))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblResetNumberValue)
+                            .addComponent(lblResetNumber))
+                        .addContainerGap(21, Short.MAX_VALUE))
                     .addGroup(pnlInfoLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblResetNumber)
-                            .addComponent(lblResetNumberValue)))
-                    .addGroup(pnlInfoLayout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(btnRestart)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlInfoLayout.createSequentialGroup()
+                                .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnNext)
+                                    .addComponent(btnPrevious))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnGiveUp)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnReset)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRestart))
+                            .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel1)
+                                .addComponent(lblChiffreSomme)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         btnNext.getAccessibleContext().setAccessibleName("btnNext");
@@ -606,7 +652,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                     .addGroup(pnlGameModeLayout.createSequentialGroup()
                         .addGap(41, 41, 41)
                         .addComponent(btnSave)))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlGameModeLayout.setVerticalGroup(
             pnlGameModeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -660,6 +706,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
 
         lblPointsValue.setText("0");
 
+        lblLevel.setText("Level :");
+
+        lblLvlValue.setText("0");
+
         javax.swing.GroupLayout pnlCheckBoxLayout = new javax.swing.GroupLayout(pnlCheckBox);
         pnlCheckBox.setLayout(pnlCheckBoxLayout);
         pnlCheckBoxLayout.setHorizontalGroup(
@@ -668,19 +718,22 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 .addContainerGap()
                 .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(checkReverse)
-                    .addComponent(checkNoHelp)
                     .addGroup(pnlCheckBoxLayout.createSequentialGroup()
                         .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(checkNoise)
-                            .addComponent(checkMean))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                            .addComponent(checkMean)
+                            .addComponent(checkNoHelp))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblLevel)
+                            .addComponent(lblPoints)
+                            .addComponent(lblTime))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblPoints, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblTime, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTimeValue, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblPointsValue, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblTimeValue, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblPointsValue, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(lblLvlValue, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         pnlCheckBoxLayout.setVerticalGroup(
@@ -691,7 +744,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                     .addGroup(pnlCheckBoxLayout.createSequentialGroup()
                         .addComponent(checkNoise)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(checkMean))
+                        .addComponent(checkMean)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(checkNoHelp)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(checkReverse))
                     .addGroup(pnlCheckBoxLayout.createSequentialGroup()
                         .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTime)
@@ -699,11 +756,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblPoints)
-                            .addComponent(lblPointsValue))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(checkNoHelp)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(checkReverse)
+                            .addComponent(lblPointsValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlCheckBoxLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblLevel)
+                            .addComponent(lblLvlValue))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -720,11 +777,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                     .addComponent(panelDigits, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelBackgroundLayout.createSequentialGroup()
                         .addComponent(pnlInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlGameMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 50, Short.MAX_VALUE)))
+                        .addGap(0, 61, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelBackgroundLayout.setVerticalGroup(
@@ -737,7 +794,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                     .addComponent(pnlCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlGameMode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -762,9 +819,21 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 currentReplay++;   
                 setReplayValue();
             }
+            else if(gameObject.modeArcade){
+                gameObject.arcadeLvl++;  
+                createNewGameModel();
+                lblLvlValue.setText(String.valueOf(gameObject.arcadeLvl));
+                gameObject.mean = gameObject.gameModel.getMean();
+                checkMean.setSelected(gameObject.mean);
+                gameObject.noise = gameObject.gameModel.getNoise();
+                checkNoise.setSelected(gameObject.noise);
+                gameObject.reverse = gameObject.gameModel.getReverse();
+                checkReverse.setSelected(gameObject.reverse);
+                gameObject.noHelp = gameObject.gameModel.getNoHelp();
+                checkNoHelp.setSelected(gameObject.noHelp);
+            }
             else{
-                gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade);
-                setNewValues();
+                createNewGameModel();
             }
         }
     }//GEN-LAST:event_btnNextMouseClicked
@@ -846,28 +915,41 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
 
     private void radioTrainingItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioTrainingItemStateChanged
         if(radioTraining.isSelected()){
-            createNewGameModel();
             gameObject.modeEntrainement = true;
             gameObject.modeArcade = false;
             gameObject.modeReplay = false;
+            createNewGameModel();
             checkMean.setEnabled(true);
             checkNoHelp.setEnabled(true);
             checkNoise.setEnabled(true);
             checkReverse.setEnabled(true);
-            
         }
     }//GEN-LAST:event_radioTrainingItemStateChanged
 
     private void radioArcadeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioArcadeItemStateChanged
         if(radioArcade.isSelected()){
-            createNewGameModel();
             gameObject.modeArcade = true;
             gameObject.modeEntrainement = false;
-            gameObject.modeReplay = false;            
+            gameObject.modeReplay = false; 
+            gameObject.arcadeLvl++;  
+            createNewGameModel();
+            lblLvlValue.setText(String.valueOf(gameObject.arcadeLvl));
+            gameObject.mean = gameObject.gameModel.getMean();
+            checkMean.setSelected(gameObject.mean);
+            gameObject.noise = gameObject.gameModel.getNoise();
+            checkNoise.setSelected(gameObject.noise);
+            gameObject.reverse = gameObject.gameModel.getReverse();
+            checkReverse.setSelected(gameObject.reverse);
+            gameObject.noHelp = gameObject.gameModel.getNoHelp();
+            checkNoHelp.setSelected(gameObject.noHelp);
             checkMean.setEnabled(false);
             checkNoHelp.setEnabled(false);
             checkNoise.setEnabled(false);
             checkReverse.setEnabled(false);
+            lblLevel.setVisible(true);
+            lblLvlValue.setVisible(true);
+            lblPoints.setVisible(true);
+            lblPointsValue.setVisible(true);
         }
     }//GEN-LAST:event_radioArcadeItemStateChanged
 
@@ -894,10 +976,20 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         JOptionPane.showMessageDialog(null, "Partie sauvegardée");        
     }//GEN-LAST:event_btnSaveMouseClicked
 
+    private void btnPreviousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPreviousMouseClicked
+        if(btnPrevious.isEnabled()){
+            if(gameObject.modeReplay){
+                currentReplay--;   
+                setReplayValue();
+            }
+        }
+    }//GEN-LAST:event_btnPreviousMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGiveUp;
     private javax.swing.JButton btnNext;
+    private javax.swing.JButton btnPrevious;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnRestart;
     private javax.swing.JButton btnSave;
@@ -911,6 +1003,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private javax.swing.JLabel lblGameMode;
     private javax.swing.JLabel lblGroups;
     private javax.swing.JLabel lblGroupsValue;
+    private javax.swing.JLabel lblLevel;
+    private javax.swing.JLabel lblLvlValue;
     private javax.swing.JLabel lblPoints;
     private javax.swing.JLabel lblPointsValue;
     private javax.swing.JLabel lblResetNumber;
