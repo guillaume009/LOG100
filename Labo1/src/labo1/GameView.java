@@ -2,7 +2,6 @@ package labo1;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -36,6 +35,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     private Validation valid;//Classe pour la validation
     private saveData save;//Classe pour la sauvegarde
     private boolean isDragging;//Si le joueur est en train de drag
+    private boolean isSelectingCheckbox;//Si le programme selectionne manuellement les checkbox
     private int timerMinSave;//La valeur des minutes du timer sauvegardé
     private int timerSecSave;//La valeur des secondes du timer sauvegardé
     private int currentReplay;//L'index de la reprise actuelle
@@ -58,6 +58,10 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         initialiseColors();        
         setNewValues();          
     }
+    /***
+     * Initialise les composants lors de l'ouverture du jeu
+     * @param gameNumbers Les valeurs des chiffres
+     */
     private void initFirstTimeComponents(GameModel gameNumbers){
         valid = new Validation();
         save = new saveData();
@@ -281,6 +285,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             btnSave.setEnabled(true);
         }
         if(gameObject.modeArcade){
+            calculPointsWin();
             btnNext.setEnabled(true);
         }
     }
@@ -294,6 +299,30 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblGroupsValue.setText(String.valueOf(gameObject.groups));
         checkIfGameEnd();
         this.updateUI();
+    }
+    private void calculPointsWin(){
+        System.out.println("size " + gameObject.gameModel.getListeChiffres().size());
+        int newPoints = (gameObject.gameModel.getNbDecoupage() * 3) + (2 * gameObject.gameModel.getListeChiffres().size());
+        if(checkMean.isSelected()){
+            newPoints += 20 * (gameObject.gameModel.getListeChiffres().size() / 13);
+        }
+        if(checkReverse.isSelected()){
+            newPoints += 20 * (gameObject.gameModel.getListeChiffres().size() / 13);
+        }
+        if(checkNoise.isSelected()){
+            newPoints += 10 * (gameObject.gameModel.getListeChiffres().size() / 13);
+        }
+        if(checkNoHelp.isSelected()){
+            newPoints += 6 * (gameObject.gameModel.getListeChiffres().size() / 13);
+        }
+        if(newPoints <= 100){
+            gameObject.nbPoints += newPoints;
+        }
+        else{
+            gameObject.nbPoints += 100;
+        }
+        lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
+        
     }
     
     /***
@@ -428,7 +457,35 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade,gameObject.arcadeLvl);
         setNewValues();
     }
-
+    /***
+     * Met à jour les éléments quand l'option arcade est choisie
+     */
+    private void updateArcadeElements(){
+        gameObject.arcadeLvl++;  
+        createNewGameModel();
+        lblLvlValue.setText(String.valueOf(gameObject.arcadeLvl));
+        gameObject.mean = gameObject.gameModel.getMean();
+        gameObject.noise = gameObject.gameModel.getNoise();
+        gameObject.reverse = gameObject.gameModel.getReverse();
+        gameObject.noHelp = gameObject.gameModel.getNoHelp();
+        isSelectingCheckbox = true;
+        checkMean.setSelected(gameObject.mean);
+        checkNoise.setSelected(gameObject.noise);
+        checkReverse.setSelected(gameObject.reverse);
+        checkNoHelp.setSelected(gameObject.noHelp);
+        isSelectingCheckbox = false;
+        if((gameObject.arcadeLvl + 2) > 21){
+            btnNext.setEnabled(false);
+        }
+        if(gameObject.noHelp){
+            lblSommeCoursChiffre.setVisible(false);
+            lblGroupsValue.setVisible(false);
+        }
+        else{
+            lblSommeCoursChiffre.setVisible(true);
+            lblGroupsValue.setVisible(true);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -532,6 +589,11 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         });
 
         btnRestart.setText("Restart");
+        btnRestart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRestartMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlInfoLayout = new javax.swing.GroupLayout(pnlInfo);
         pnlInfo.setLayout(pnlInfoLayout);
@@ -820,17 +882,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
                 setReplayValue();
             }
             else if(gameObject.modeArcade){
-                gameObject.arcadeLvl++;  
-                createNewGameModel();
-                lblLvlValue.setText(String.valueOf(gameObject.arcadeLvl));
-                gameObject.mean = gameObject.gameModel.getMean();
-                checkMean.setSelected(gameObject.mean);
-                gameObject.noise = gameObject.gameModel.getNoise();
-                checkNoise.setSelected(gameObject.noise);
-                gameObject.reverse = gameObject.gameModel.getReverse();
-                checkReverse.setSelected(gameObject.reverse);
-                gameObject.noHelp = gameObject.gameModel.getNoHelp();
-                checkNoHelp.setSelected(gameObject.noHelp);
+                updateArcadeElements();
             }
             else{
                 createNewGameModel();
@@ -889,30 +941,56 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             gameObject.groups++;
             j++;
             k++;
-        }        
+        }     
+        if(gameObject.modeArcade){
+            //btnNext.setEnabled(false);
+        }
         updateUI();
     }//GEN-LAST:event_btnGiveUpMouseClicked
-
+    /***
+     * Quand l'option noise est choisie, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du checkbox
+     */
     private void checkNoiseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoiseItemStateChanged
-        gameObject.noise = checkBooleanValue(checkNoise.isSelected());
-        createNewGameModel();
+        if(!isSelectingCheckbox){
+            gameObject.noise = checkBooleanValue(checkNoise.isSelected());
+            createNewGameModel();
+        }
     }//GEN-LAST:event_checkNoiseItemStateChanged
-
+    /***
+     * Quand l'option mean est choisie, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du checkbox
+     */
     private void checkMeanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkMeanItemStateChanged
-        gameObject.mean = checkBooleanValue(checkMean.isSelected());
-        createNewGameModel();
+        if(!isSelectingCheckbox){
+            gameObject.mean = checkBooleanValue(checkMean.isSelected());
+            createNewGameModel();
+        }
     }//GEN-LAST:event_checkMeanItemStateChanged
-
+    /***
+     * Quand l'option no help est choisie, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du checkbox
+     */
     private void checkNoHelpItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkNoHelpItemStateChanged
-        gameObject.noHelp = checkBooleanValue(checkNoHelp.isSelected());
-        createNewGameModel();
+        if(!isSelectingCheckbox){
+            gameObject.noHelp = checkBooleanValue(checkNoHelp.isSelected());
+            createNewGameModel();
+        }
     }//GEN-LAST:event_checkNoHelpItemStateChanged
-
+    /***
+     * Quand l'option reverse est choisie, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du checkbox
+     */
     private void checkReverseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkReverseItemStateChanged
-        gameObject.reverse = checkBooleanValue(checkReverse.isSelected());
-        createNewGameModel();
+        if(!isSelectingCheckbox){
+            gameObject.reverse = checkBooleanValue(checkReverse.isSelected());
+            createNewGameModel();
+        }
     }//GEN-LAST:event_checkReverseItemStateChanged
-
+    /***
+     * Quand le mode training est choisi, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du radio button
+     */
     private void radioTrainingItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioTrainingItemStateChanged
         if(radioTraining.isSelected()){
             gameObject.modeEntrainement = true;
@@ -925,23 +1003,15 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             checkReverse.setEnabled(true);
         }
     }//GEN-LAST:event_radioTrainingItemStateChanged
-
+    /***
+     * Quand le mode arcade est choisi, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du radio button
+     */
     private void radioArcadeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioArcadeItemStateChanged
         if(radioArcade.isSelected()){
             gameObject.modeArcade = true;
             gameObject.modeEntrainement = false;
-            gameObject.modeReplay = false; 
-            gameObject.arcadeLvl++;  
-            createNewGameModel();
-            lblLvlValue.setText(String.valueOf(gameObject.arcadeLvl));
-            gameObject.mean = gameObject.gameModel.getMean();
-            checkMean.setSelected(gameObject.mean);
-            gameObject.noise = gameObject.gameModel.getNoise();
-            checkNoise.setSelected(gameObject.noise);
-            gameObject.reverse = gameObject.gameModel.getReverse();
-            checkReverse.setSelected(gameObject.reverse);
-            gameObject.noHelp = gameObject.gameModel.getNoHelp();
-            checkNoHelp.setSelected(gameObject.noHelp);
+            gameObject.modeReplay = false;
             checkMean.setEnabled(false);
             checkNoHelp.setEnabled(false);
             checkNoise.setEnabled(false);
@@ -950,9 +1020,15 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             lblLvlValue.setVisible(true);
             lblPoints.setVisible(true);
             lblPointsValue.setVisible(true);
+            gameObject.arcadeLvl = 0;
+            gameObject.nbPoints = 0;
+            updateArcadeElements();
         }
     }//GEN-LAST:event_radioArcadeItemStateChanged
-
+    /***
+     * Quand le mode replay est choisi, un nouveau jeu est créé avec les bonnes options
+     * @param evt L'evenement de la selection du radio button
+     */
     private void radioReplayItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioReplayItemStateChanged
         if(radioReplay.isSelected()){
             listGameObject = new ArrayList();
@@ -969,13 +1045,19 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             
         }
     }//GEN-LAST:event_radioReplayItemStateChanged
-
+    /***
+     * Sauvegarde le jeu quand le bouton save est cliqué
+     * @param evt L'évenement du clic
+     */
     private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
         save.saveToFile(gameObject);
         btnSave.setEnabled(false);
         JOptionPane.showMessageDialog(null, "Partie sauvegardée");        
     }//GEN-LAST:event_btnSaveMouseClicked
-
+    /***
+     * Quand le bouton précédent est cliqué, la sauvegarde précédente est chargé
+     * @param evt L'événement du clic sur le bouton
+     */
     private void btnPreviousMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPreviousMouseClicked
         if(btnPrevious.isEnabled()){
             if(gameObject.modeReplay){
@@ -984,8 +1066,18 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             }
         }
     }//GEN-LAST:event_btnPreviousMouseClicked
-
-
+    /***
+     * Quand le bouton restart est cliqué, le mode arcade recommence à 0
+     * @param evt L'événement du clic sur le bouton
+     */
+    private void btnRestartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestartMouseClicked
+       if(btnReset.isEnabled()){
+            gameObject.arcadeLvl = 0;
+            gameObject.nbPoints = 0;
+            lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
+            updateArcadeElements();
+       }
+    }//GEN-LAST:event_btnRestartMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGiveUp;
     private javax.swing.JButton btnNext;

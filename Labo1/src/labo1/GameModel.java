@@ -18,10 +18,10 @@ public class GameModel {
     private int noisePosition = -1;//Position du chiffre de noise dans la liste
     private int nbDecoupage = 0;//nombre de découpage différent
     private int noiseValue;//valeur du noise
-    private boolean noiseArcade;
-    private boolean reverseArcade;
-    private boolean meanArcade;
-    private boolean noHelpArcade;
+    private boolean noiseArcade;// Si l'option noise est activé en arcade
+    private boolean reverseArcade;// Si l'option reverse est activé en arcade
+    private boolean meanArcade;// Si l'option mean est activé en arcade
+    private boolean noHelpArcade;// Si l'option no help est activé en arcade
     /***
      * Initialise la partie qui contient les chiffres du jeu
      */
@@ -84,21 +84,21 @@ public class GameModel {
     public boolean getNoHelp(){
         return noHelpArcade;
     }
+    /***
+     * Initialise les valeurs du mode arcade
+     * @param lvlArcade le niveau courant
+     */
     private void initialiseNumbersArcade(int lvlArcade){
         noiseArcade = arcadeOptionProb(lvlArcade);
         meanArcade = arcadeOptionProb(lvlArcade);
-        reverseArcade = arcadeOptionProb(lvlArcade);
         noHelpArcade = arcadeOptionProb(lvlArcade);
         generateListNumbersArcade(lvlArcade);
-        splitListNumbers(reverseArcade);
-        System.out.println("decoupage = " + nbDecoupage);
-        System.out.println("noise = " + noiseArcade);
-        System.out.println("mean = " + meanArcade);
-        System.out.println("noHelp = " + noHelpArcade);
-        System.out.println("reverse = " + reverseArcade);
-        System.out.println("Level = " + lvlArcade);
-        System.out.println("========");
+        splitListNumbersArcade(lvlArcade);
     }
+    /***
+     * Génére les chiffres pour le mode arcade
+     * @param lvlArcade le niveau courant
+     */
     private void generateListNumbersArcade(int lvlArcade){
         nbDecoupage = (int) (3 + Math.round(3.0 * lvlArcade/20));
         totalToGet = 0;
@@ -126,6 +126,11 @@ public class GameModel {
             insertNoise();
         }     
     }
+    /***
+     * Retourne une valeur selon une probabilité pour les options du mode arcade
+     * @param lvlArcade le niveau courant
+     * @return vrai ou faux
+     */
     private boolean arcadeOptionProb(int lvlArcade){
         double possibility = 0.1 + (0.9 * lvlArcade /20);
         double d = Math.random();
@@ -136,6 +141,11 @@ public class GameModel {
             return true;
         }
     }
+    /***
+     * Vérifie si le nombre doit être plus grand que 9
+     * @param lvlArcade le niveau courant
+     * @return vrai ou faux
+     */
     private boolean isHigherThan9Arcade(int lvlArcade){
         double probability = 0.3 + (0.3 * lvlArcade /20);
         double d = Math.random();
@@ -147,6 +157,29 @@ public class GameModel {
         }
     }
     /***
+     * Sépare les chiffres plus grand que 9 dans le mode arcade
+     * @param lvlArcade le niveau courant
+     */
+    private void splitListNumbersArcade(int lvlArcade){
+        for(int i = 0; i < listNumbers.size();i++){            
+            if ((int)listNumbers.get(i) > 9){                
+                int[] numberSplited = splitNumber((int)listNumbers.get(i));
+                if(arcadeOptionProb(lvlArcade)){
+                        reverseArcade = true;
+                        listDigits.add(numberSplited[1]);
+                        listDigits.add(numberSplited[0]);
+                }
+                else{
+                    listDigits.add(numberSplited[0]);
+                    listDigits.add(numberSplited[1]);    
+                }                               
+            }
+            else{
+                listDigits.add(listNumbers.get(i));
+            }
+        }
+    }
+    /***
      * Créer des nouveaux nombres 
      * @param noise si il y a un noise
      * @param mean si c'est une division
@@ -155,6 +188,11 @@ public class GameModel {
         generateListNumbers(mean,noise);
         splitListNumbers(reverse);
     }
+    /***
+     * Génére une liste de nombre
+     * @param mean Si l'option mean est activé
+     * @param noise Si l'option noise est activé
+     */
     private void generateListNumbers(boolean mean, boolean noise){
         nbDecoupage = chooseNbDecoupage();
         totalToGet = 0;
@@ -182,11 +220,16 @@ public class GameModel {
             insertNoise();
         }     
     }
+    /***
+     * Sépare les nombres plus grand que 9 en 2 chiffres
+     * @param reverse s'il peu y avoir des nombres à l'envers
+     */
     private void splitListNumbers(boolean reverse){
         for(int i = 0; i < listNumbers.size();i++){            
             if ((int)listNumbers.get(i) > 9){                
                 int[] numberSplited = splitNumber((int)listNumbers.get(i));
                 if(reverse && reverseNumber()){
+                        reverseArcade = true;
                         listDigits.add(numberSplited[1]);
                         listDigits.add(numberSplited[0]);
                 }
@@ -200,14 +243,18 @@ public class GameModel {
             }
         }
     }
+    /***
+     * Vérifie si le nombre va être à l'envers
+     * @return  vrai ou faux
+     */
     private boolean reverseNumber(){
         double d = Math.random();
         if (d >= 0.5){
-            return true;
-        }
-        else{
-            return false;
-        }
+             return true;
+         }
+         else{
+             return false;
+         } 
     }
     /***
      * Trouve le nouveau total lorsque le mean est activé

@@ -28,6 +28,7 @@ public class GameObject {
     public boolean mean;
     public boolean noHelp;
     public boolean reverse;
+    
     public boolean modeEntrainement;//Si le mode entrainement est actif
     public boolean modeArcade;// Si le mode arcade est actif
     public boolean modeReplay;//Si le mode replay est actif
