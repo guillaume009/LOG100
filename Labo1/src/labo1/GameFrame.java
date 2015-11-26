@@ -16,9 +16,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
  */
 public class GameFrame extends JFrame{
 
-    public static GameView gameView; //hérite de JPanel, gère l’interface et contrôle
-    public static GameModel gameModel; //exemplaire du jeu.on
-
     /**
      * Crée le jeu
      */
@@ -33,9 +30,9 @@ public class GameFrame extends JFrame{
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
-        gameModel = new GameModel();
+        GameModel gameModel = new GameModel();
         initUI(); //Initialisation de la vue gameView
-        gameView = new GameView(gameModel);
+        GameView gameView = new GameView(gameModel);
         setContentPane(gameView);
     }
 

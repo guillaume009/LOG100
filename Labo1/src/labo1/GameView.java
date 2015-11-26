@@ -1049,9 +1049,12 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt L'évenement du clic
      */
     private void btnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSaveMouseClicked
-        save.saveToFile(gameObject);
-        btnSave.setEnabled(false);
-        JOptionPane.showMessageDialog(null, "Partie sauvegardée");        
+        if(btnSave.isEnabled())
+        {
+            save.saveToFile(gameObject);
+            btnSave.setEnabled(false);
+            JOptionPane.showMessageDialog(null, "Partie sauvegardée");  
+        }
     }//GEN-LAST:event_btnSaveMouseClicked
     /***
      * Quand le bouton précédent est cliqué, la sauvegarde précédente est chargé
@@ -1070,7 +1073,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt L'événement du clic sur le bouton
      */
     private void btnRestartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRestartMouseClicked
-       if(btnReset.isEnabled()){
+       if(btnRestart.isEnabled()){
             gameObject.arcadeLvl = 0;
             gameObject.nbPoints = 0;
             lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
