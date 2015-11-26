@@ -56,7 +56,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         initComponents();
         initFirstTimeComponents(gameNumbers);
         initialiseColors();        
-        setNewValues();          
+        resetBasicValues();          
     }
     /***
      * Initialise les composants lors de l'ouverture du jeu
@@ -89,8 +89,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
         //Assignation des valeurs de départ
-        gameObject.arcadeLvl = 0;
-        gameObject.nbPoints = 0;
+        //gameObject.arcadeLvl = 18;
+        //gameObject.nbPoints = 0;
         currentReplay = 0;
         lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
         //Initialisation du timer
@@ -114,13 +114,13 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     /***
      * Remet les valeurs à zéro et affiche de nouveaux chiffres à combiner
      */
-    private void setNewValues(){      
+    private void resetBasicValues(){      
         lblResetNumberValue.setText("0");
         gameObject.nbReset = 0;
         panelDigits.removeAll();
         panelDigits.setLayout(new GridLayout());        
         changeDigits();
-        resetValue();
+        resetAllValues();
     }
     /***
      * Affiche de nouveaux chiffres 
@@ -146,7 +146,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     /***
      * Réinitialise les actions effectuées
      */
-    private void resetValue(){         
+    private void resetAllValues(){         
         lblChiffreSomme.setText(String.valueOf(gameObject.gameModel.getSomme()));
         lblSommeCoursChiffre.setText("0");
         lblGroupsValue.setText("0");
@@ -300,6 +300,9 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         checkIfGameEnd();
         this.updateUI();
     }
+    /***
+     * Calcule le total des points en fonction des options et le met à jour
+     */
     private void calculPointsWin(){
         System.out.println("size " + gameObject.gameModel.getListeChiffres().size());
         int newPoints = (gameObject.gameModel.getNbDecoupage() * 3) + (2 * gameObject.gameModel.getListeChiffres().size());
@@ -324,7 +327,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
         
     }
-    
     /***
      * Ajoute le label à la liste de label qui sont présentement selectionnés
      * @param me Le label cliquer
@@ -365,9 +367,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
     @Override
     public void mouseEntered(MouseEvent me) {
         if(isDragging){            
-            //TODO : Retirer si sa brise pas
-            //java.awt.Point p = new java.awt.Point(me.getLocationOnScreen());
-            //SwingUtilities.convertPointFromScreen(p, me.getComponent()); 
             JLabel label = (JLabel) me.getSource();
             listDrag.add(label);
         }
@@ -382,7 +381,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         panelDigits.removeAll();
         panelDigits.setLayout(new GridLayout());        
         changeDigits();
-        resetValue();
+        resetAllValues();
         gameObject.modeReplay = true;
         gameObject.modeEntrainement = false;
         gameObject.modeArcade = false;
@@ -395,16 +394,16 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         gameObject.nbReset = listGameObject.get(currentReplay).reset;
         lblResetNumberValue.setText(String.valueOf(listGameObject.get(currentReplay).reset));
         gameObject.noise = listGameObject.get(currentReplay).noise;
-        checkNoise.setSelected(listGameObject.get(currentReplay).noise);
-        checkNoise.setEnabled(false);
         gameObject.mean = listGameObject.get(currentReplay).mean;
-        checkMean.setSelected(listGameObject.get(currentReplay).mean);
-        checkMean.setEnabled(false);
         gameObject.noHelp = listGameObject.get(currentReplay).noHelp;
-        checkNoHelp.setSelected(listGameObject.get(currentReplay).noHelp);
-        checkNoHelp.setEnabled(false);
         gameObject.reverse = listGameObject.get(currentReplay).reverse;
+        checkNoise.setSelected(listGameObject.get(currentReplay).noise);
+        checkMean.setSelected(listGameObject.get(currentReplay).mean);
+        checkNoHelp.setSelected(listGameObject.get(currentReplay).noHelp);
         checkReverse.setSelected(listGameObject.get(currentReplay).reverse);
+        checkNoise.setEnabled(false);
+        checkMean.setEnabled(false);
+        checkNoHelp.setEnabled(false);
         checkReverse.setEnabled(false);
         timerMinSave = listGameObject.get(currentReplay).timerMin;
         timerSecSave = listGameObject.get(currentReplay).timerSec;
@@ -455,7 +454,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      */
     private void createNewGameModel(){
         gameObject.gameModel = new GameModel(gameObject.noise,gameObject.mean,gameObject.reverse,gameObject.modeArcade,gameObject.arcadeLvl);
-        setNewValues();
+        resetBasicValues();
     }
     /***
      * Met à jour les éléments quand l'option arcade est choisie
@@ -474,7 +473,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         checkReverse.setSelected(gameObject.reverse);
         checkNoHelp.setSelected(gameObject.noHelp);
         isSelectingCheckbox = false;
-        if((gameObject.arcadeLvl + 2) > 21){
+        if((gameObject.arcadeLvl + 1) >= 21){ // Si le joueur a atteint le niveau 20
             btnNext.setEnabled(false);
         }
         if(gameObject.noHelp){
@@ -894,7 +893,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
      * @param evt Le clic
      */
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
-        resetValue();
+        resetAllValues();
         if(gameObject.modeArcade){
             gameObject.nbPoints = valid.findNewPointsTotal(gameObject.nbPoints, -3);        
             lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
@@ -943,7 +942,7 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             k++;
         }     
         if(gameObject.modeArcade){
-            //btnNext.setEnabled(false);
+            btnNext.setEnabled(false);
         }
         updateUI();
     }//GEN-LAST:event_btnGiveUpMouseClicked
