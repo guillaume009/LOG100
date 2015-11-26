@@ -89,8 +89,6 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
         pnlCheckBox.setBorder(b);
         pnlGameMode.setBorder(b);
         //Assignation des valeurs de départ
-        //gameObject.arcadeLvl = 18;
-        //gameObject.nbPoints = 0;
         currentReplay = 0;
         lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
         //Initialisation du timer
@@ -1021,6 +1019,8 @@ public class GameView extends javax.swing.JPanel implements MouseListener, Mouse
             lblPointsValue.setVisible(true);
             gameObject.arcadeLvl = 0;
             gameObject.nbPoints = 0;
+            lblLvlValue.setText(String.valueOf(gameObject.arcadeLvl));
+            lblPointsValue.setText(String.valueOf(gameObject.nbPoints));
             updateArcadeElements();
         }
     }//GEN-LAST:event_radioArcadeItemStateChanged
