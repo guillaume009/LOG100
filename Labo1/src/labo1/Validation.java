@@ -31,6 +31,8 @@ public class Validation {
      * @param mean si c'est une division
      * @param listLabelDigits la liste de toutes les valeurs des labels selectionnés
      * @param listLabel la liste des labels
+     * @param nbGroups le nombre de groupe en cours
+     * @param nbDecoupage le nombre de découpage à avoir
      * @return retourne une valeur en fonction de si le joueur a gagné, perdu, ou s'il peut continuer à jouer
      */
     public int checkGameOver(int sommeEnCours, int sommeAAvoir,int nbGroups,int nbDecoupage,

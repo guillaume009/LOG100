@@ -35,6 +35,9 @@ public class GameModel {
      * Initialise la partie qui contient les chiffres du jeu avec les paramètres spécifiques
      * @param noise Si l'option noise est activé
      * @param mean Si l'option mean est activé
+     * @param reverse Si l'option reverse est activé
+     * @param arcade Si l'option arcade est activé
+     * @param lvlArcade Le niveau du mode arcade
      */
     public GameModel(boolean noise,boolean mean,boolean reverse,boolean arcade,int lvlArcade){
         if(arcade){
